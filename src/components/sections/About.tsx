@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView, Variants } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
+import { Rocket, Users, Lightbulb, Star } from 'lucide-react';
 
 export default function About() {
   const ref = useRef(null);
@@ -12,22 +13,22 @@ export default function About() {
     {
       title: "High-Agency",
       description: "We believe in empowering individuals to take ownership and drive meaningful change.",
-      icon: "🚀"
+      icon: Rocket
     },
     {
       title: "Collaboration",
       description: "Great work happens when talented people come together with a shared vision.",
-      icon: "🤝"
+      icon: Users
     },
     {
       title: "Innovation",
       description: "We push boundaries and challenge conventions to create something extraordinary.",
-      icon: "💡"
+      icon: Lightbulb
     },
     {
       title: "Excellence",
       description: "We hold ourselves to the highest standards in everything we do.",
-      icon: "⭐"
+      icon: Star
     }
   ];
 
@@ -83,23 +84,29 @@ export default function About() {
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
         >
-          {values.map((value, index) => (
-            <motion.div 
-              key={index}
-              variants={itemVariants}
-              whileHover={{ scale: 1.02, y: -5 }}
-            >
-              <Card className="bg-gradient-to-br from-secondary/80 to-secondary/40 border-white/10 hover:border-primary/30 transition-all h-full">
-                <CardContent className="p-6">
-                  <span className="text-4xl block mb-4">{value.icon}</span>
-                  <h3 className="text-lg font-bold mb-2">{value.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{value.description}</p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+          {values.map((value, index) => {
+            const Icon = value.icon;
+            return (
+              <motion.div 
+                key={index}
+                variants={itemVariants}
+                whileHover={{ scale: 1.02, y: -5 }}
+              >
+                <Card className="bg-gradient-to-br from-secondary/80 to-secondary/40 border-white/10 hover:border-primary/30 transition-all h-full">
+                  <CardContent className="p-6">
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                      <Icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-bold mb-2">{value.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{value.description}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>
   );
 }
+

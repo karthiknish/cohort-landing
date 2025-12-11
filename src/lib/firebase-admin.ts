@@ -21,7 +21,14 @@ const getServiceAccount = (): ServiceAccount => {
 
   try {
     const decodedJson = Buffer.from(base64ServiceAccount, 'base64').toString('utf-8');
-    const serviceAccount = JSON.parse(decodedJson) as ServiceAccount;
+    const rawAccount = JSON.parse(decodedJson);
+    
+    // Map snake_case fields from Google's JSON to camelCase expected by ServiceAccount
+    const serviceAccount: ServiceAccount = {
+      projectId: rawAccount.project_id,
+      clientEmail: rawAccount.client_email,
+      privateKey: rawAccount.private_key,
+    };
     
     // Validate required fields
     if (!serviceAccount.projectId || !serviceAccount.clientEmail || !serviceAccount.privateKey) {
