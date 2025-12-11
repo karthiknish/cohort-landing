@@ -1,0 +1,254 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { useAuth } from '@/components/AdminAuthProvider';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Search, Download, LogOut, Loader2 } from 'lucide-react';
+
+interface Lead {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  status: 'new' | 'contacted' | 'converted';
+  createdAt: string;
+}
+
+export default function LeadsPage() {
+  const { user, loading: authLoading, logout } = useAuth();
+  const router = useRouter();
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/admin/login');
+    }
+  }, [user, authLoading, router]);
+
+  useEffect(() => {
+    if (user) {
+      fetchLeads();
+    }
+  }, [user]);
+
+  const fetchLeads = async () => {
+    try {
+      const response = await fetch('/api/leads');
+      const data = await response.json();
+      setLeads(data.leads || []);
+    } catch (error) {
+      console.error('Error fetching leads:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/admin/login');
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
+    switch (status) {
+      case 'new':
+        return 'default';
+      case 'contacted':
+        return 'secondary';
+      case 'converted':
+        return 'outline';
+      default:
+        return 'default';
+    }
+  };
+
+  const filteredLeads = leads.filter(lead => {
+    const matchesSearch = 
+      lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.company.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  const exportToCSV = () => {
+    const headers = ['Name', 'Email', 'Phone', 'Company', 'Status', 'Created At'];
+    const csvData = filteredLeads.map(lead => [
+      lead.name,
+      lead.email,
+      lead.phone,
+      lead.company,
+      lead.status,
+      formatDate(lead.createdAt),
+    ]);
+    
+    const csvContent = [headers, ...csvData]
+      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `leads_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+  };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="flex justify-between items-center px-6 py-4 border-b border-white/10 bg-card">
+        <div className="flex items-center gap-4">
+          <a href="/" className="text-xl font-black tracking-widest text-primary">COHORT</a>
+          <span className="text-muted-foreground">/</span>
+          <h1 className="text-lg font-semibold">Leads Dashboard</h1>
+        </div>
+        <Button variant="outline" onClick={handleLogout} className="gap-2">
+          <LogOut className="w-4 h-4" />
+          Logout
+        </Button>
+      </header>
+
+      <main className="max-w-7xl mx-auto p-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {[
+            { label: 'Total Leads', value: leads.length, delay: 0.1 },
+            { label: 'New', value: leads.filter(l => l.status === 'new').length, delay: 0.2 },
+            { label: 'Contacted', value: leads.filter(l => l.status === 'contacted').length, delay: 0.3 },
+            { label: 'Converted', value: leads.filter(l => l.status === 'converted').length, delay: 0.4 },
+          ].map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: stat.delay }}
+            >
+              <Card className="bg-gradient-to-br from-secondary/80 to-secondary/40 border-white/10">
+                <CardContent className="p-6 text-center">
+                  <div className="text-4xl font-extrabold text-primary mb-1">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search leads..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-secondary border-white/10"
+            />
+          </div>
+          <select 
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-4 py-2 bg-secondary border border-white/10 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <option value="all">All Status</option>
+            <option value="new">New</option>
+            <option value="contacted">Contacted</option>
+            <option value="converted">Converted</option>
+          </select>
+          <Button onClick={exportToCSV} className="gap-2 bg-primary hover:bg-primary/90">
+            <Download className="w-4 h-4" />
+            Export CSV
+          </Button>
+        </div>
+
+        {loading ? (
+          <div className="flex items-center justify-center min-h-[300px]">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : filteredLeads.length === 0 ? (
+          <Card className="bg-gradient-to-br from-secondary/60 to-secondary/30 border-white/10">
+            <CardContent className="text-center py-16">
+              <h3 className="text-xl font-semibold mb-2">No leads found</h3>
+              <p className="text-muted-foreground">Leads will appear here when users submit the brochure form.</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="bg-gradient-to-br from-secondary/60 to-secondary/30 border-white/10 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent border-white/10">
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Phone</TableHead>
+                  <TableHead>Company</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Created</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredLeads.map((lead) => (
+                  <TableRow key={lead.id} className="border-white/10 hover:bg-primary/5">
+                    <TableCell className="font-medium">{lead.name}</TableCell>
+                    <TableCell>
+                      <a href={`mailto:${lead.email}`} className="text-primary hover:underline">
+                        {lead.email}
+                      </a>
+                    </TableCell>
+                    <TableCell>{lead.phone || '-'}</TableCell>
+                    <TableCell>{lead.company || '-'}</TableCell>
+                    <TableCell>
+                      <Badge variant={getStatusVariant(lead.status)} className="uppercase text-xs">
+                        {lead.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {formatDate(lead.createdAt)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+        )}
+      </main>
+    </div>
+  );
+}

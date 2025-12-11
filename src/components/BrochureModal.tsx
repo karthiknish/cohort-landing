@@ -1,0 +1,187 @@
+'use client';
+
+import { useState, FormEvent } from 'react';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { X, Check, Loader2 } from 'lucide-react';
+
+interface BrochureModalProps {
+  onClose: () => void;
+}
+
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+}
+
+export default function BrochureModal({ onClose }: BrochureModalProps) {
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/leads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit form');
+      }
+
+      setIsSuccess(true);
+      
+      // Trigger brochure download
+      const link = document.createElement('a');
+      link.href = '/Brochure.pdf';
+      link.download = 'Cohort-Brochure.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Auto-close after success
+      setTimeout(() => {
+        onClose();
+      }, 3000);
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
+      console.error('Form submission error:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  return (
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[450px] bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border-white/10">
+        {isSuccess ? (
+          <motion.div 
+            className="text-center py-8"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-primary to-orange-400 rounded-full flex items-center justify-center">
+              <Check className="w-10 h-10 text-white" />
+            </div>
+            <h3 className="text-xl font-bold mb-2">Thank You!</h3>
+            <p className="text-muted-foreground">Your brochure is downloading now.</p>
+          </motion.div>
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-center">Download Brochure</DialogTitle>
+              <DialogDescription className="text-center">
+                Fill in your details to receive our comprehensive brochure
+              </DialogDescription>
+            </DialogHeader>
+
+            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name *</Label>
+                <Input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="John Doe"
+                  required
+                  className="bg-secondary border-white/10 focus:border-primary focus:ring-primary/30"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address *</Label>
+                <Input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="john@example.com"
+                  required
+                  className="bg-secondary border-white/10 focus:border-primary focus:ring-primary/30"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="+1 (234) 567-890"
+                  className="bg-secondary border-white/10 focus:border-primary focus:ring-primary/30"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="company">Company</Label>
+                <Input
+                  type="text"
+                  id="company"
+                  name="company"
+                  value={formData.company}
+                  onChange={handleChange}
+                  placeholder="Your Company"
+                  className="bg-secondary border-white/10 focus:border-primary focus:ring-primary/30"
+                />
+              </div>
+
+              {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+              <Button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90 text-white font-semibold shadow-[0_0_30px_rgba(255,107,53,0.3)] hover:shadow-[0_0_40px_rgba(255,107,53,0.4)] transition-all"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  'Get Brochure'
+                )}
+              </Button>
+            </form>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}

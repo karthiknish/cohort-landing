@@ -1,0 +1,19 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Leads collection - server-side only access via Admin SDK
+    // Public cannot read leads, only submit via API
+    match /leads/{leadId} {
+      // No client-side read/write access
+      // All operations are done via Firebase Admin SDK in API routes
+      allow read, write: if false;
+    }
+
+    // Default deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
