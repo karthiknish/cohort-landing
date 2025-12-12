@@ -30,7 +30,7 @@ export default function Features() {
           <span className="inline-block px-4 py-1.5 text-sm font-semibold text-[#F8F8FF] bg-[#7389F4]/20 border border-[#7389F4]/30 rounded-full mb-4 uppercase tracking-widest">
             Our Edge
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight text-[#F8F8FF] mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-normal leading-tight text-[#F8F8FF] mb-6">
             How are we <span className="text-[#7389F4]">different</span>?
           </h2>
           <div className="text-lg text-[#F8F8FF]/80 max-w-3xl mx-auto leading-relaxed space-y-4">

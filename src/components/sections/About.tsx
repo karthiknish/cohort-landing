@@ -79,7 +79,7 @@ export default function About() {
           <span className="inline-block px-4 py-1.5 text-sm font-semibold text-[#001640] bg-[#7389F4]/10 border border-[#7389F4]/30 rounded-full mb-4 uppercase tracking-widest">
             About Us
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-normal leading-tight mb-6">
             What are we trying to <span className="text-[#7389F4]">build</span>?
           </h2>
           <div className="text-lg text-[#001640]/80 max-w-4xl mx-auto leading-relaxed space-y-6">
@@ -103,7 +103,7 @@ export default function About() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="text-center mb-12"
           >
-            <h3 className="text-3xl md:text-4xl font-extrabold text-[#F8F8FF]">Our Ethos</h3>
+            <h3 className="text-3xl md:text-4xl font-normal text-[#F8F8FF]">Our Ethos</h3>
           </motion.div>
           
           <motion.div 
@@ -132,7 +132,7 @@ export default function About() {
 
                   <div className="relative z-10 p-8 h-full flex flex-col justify-end min-h-[240px]">
                     <div className="translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                      <h4 className="text-2xl font-bold text-[#F8F8FF] mb-2">{value.title}</h4>
+                      <h4 className="text-2xl text-[#F8F8FF] mb-2">{value.title}</h4>
                       <p className="text-[#F8F8FF]/80 leading-relaxed font-medium">{value.description}</p>
                     </div>
                   </div>

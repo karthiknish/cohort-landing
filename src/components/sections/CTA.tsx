@@ -42,7 +42,7 @@ export default function CTA() {
           >
             <Card className="bg-[#F1F1E6] border-[#001640]/10 shadow-xl">
               <CardContent className="text-center p-10 md:p-16">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight mb-4">
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-normal leading-tight mb-4">
                   Keen to know more about <span className="text-[#7389F4]">us</span>?
                 </h2>
                 <p className="text-muted-foreground text-lg max-w-xl mx-auto mb-8 leading-relaxed">
