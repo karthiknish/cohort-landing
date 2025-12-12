@@ -85,15 +85,15 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[450px] bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border-white/10">
+      <DialogContent className="sm:max-w-[450px] bg-[#F8F8FF] border-[#001640]/10">
         {isSuccess ? (
           <motion.div 
             className="text-center py-8"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-primary to-orange-400 rounded-full flex items-center justify-center">
-              <Check className="w-10 h-10 text-white" />
+            <div className="w-20 h-20 mx-auto mb-6 bg-[#7389F4] rounded-full flex items-center justify-center">
+              <Check className="w-10 h-10 text-[#F8F8FF]" />
             </div>
             <h3 className="text-xl font-bold mb-2">Thank You!</h3>
             <p className="text-muted-foreground">Your brochure is downloading now.</p>
@@ -118,7 +118,7 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
                   onChange={handleChange}
                   placeholder="John Doe"
                   required
-                  className="bg-secondary border-white/10 focus:border-primary focus:ring-primary/30"
+                  className="bg-[#F1F1E6] border-[#001640]/10 focus:border-[#7389F4] focus:ring-[#7389F4]/30"
                 />
               </div>
 
@@ -132,7 +132,7 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
                   onChange={handleChange}
                   placeholder="john@example.com"
                   required
-                  className="bg-secondary border-white/10 focus:border-primary focus:ring-primary/30"
+                  className="bg-[#F1F1E6] border-[#001640]/10 focus:border-[#7389F4] focus:ring-[#7389F4]/30"
                 />
               </div>
 
@@ -145,7 +145,7 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="+1 (234) 567-890"
-                  className="bg-secondary border-white/10 focus:border-primary focus:ring-primary/30"
+                  className="bg-[#F1F1E6] border-[#001640]/10 focus:border-[#7389F4] focus:ring-[#7389F4]/30"
                 />
               </div>
 
@@ -158,7 +158,7 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
                   value={formData.company}
                   onChange={handleChange}
                   placeholder="Your Company"
-                  className="bg-secondary border-white/10 focus:border-primary focus:ring-primary/30"
+                  className="bg-[#F1F1E6] border-[#001640]/10 focus:border-[#7389F4] focus:ring-[#7389F4]/30"
                 />
               </div>
 
@@ -166,7 +166,7 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
 
               <Button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-white font-semibold shadow-[0_0_30px_rgba(255,107,53,0.3)] hover:shadow-[0_0_40px_rgba(255,107,53,0.4)] transition-all"
+                className="w-full bg-[#001640] hover:bg-[#001640]/90 text-[#F8F8FF] font-semibold shadow-lg hover:shadow-xl transition-all"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (

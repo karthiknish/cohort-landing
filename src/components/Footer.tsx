@@ -1,97 +1,56 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Twitter, Linkedin, Instagram } from 'lucide-react';
+import { Linkedin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
-  const footerLinks = [
-    {
-      title: "Company",
-      links: [
-        { label: "About", href: "#about" },
-        { label: "Features", href: "#features" },
-        { label: "Contact", href: "#contact" },
-      ]
-    },
-    {
-      title: "Resources",
-      links: [
-        { label: "Documentation", href: "#" },
-        { label: "Community", href: "#" },
-        { label: "Blog", href: "#" },
-      ]
-    },
-    {
-      title: "Legal",
-      links: [
-        { label: "Privacy Policy", href: "#" },
-        { label: "Terms of Service", href: "#" },
-        { label: "Cookie Policy", href: "#" },
-      ]
-    }
-  ];
-
   return (
-    <footer className="py-16 border-t border-white/10">
+    <footer className="py-12 bg-[#001640]">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
-          <motion.div 
-            className="lg:col-span-2"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
+        <motion.div 
+          className="flex flex-col md:flex-row items-center justify-between gap-6"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
+          {/* Logo */}
+          <a href="/">
+            <Image 
+              src="/logo_white.svg" 
+              alt="Cohort Logo" 
+              width={140} 
+              height={40}
+              className="h-10 w-auto"
+            />
+          </a>
+
+          {/* LinkedIn CTA */}
+          <Button
+            asChild
+            className="bg-[#7389F4] hover:bg-[#7389F4]/90 text-[#F8F8FF] font-semibold px-6"
           >
-            <a href="/" className="text-2xl font-black tracking-widest text-white inline-block mb-4">
-              COHORT
-            </a>
-            <p className="text-muted-foreground leading-relaxed mb-6 max-w-xs">
-              Building the future with the most talented individuals.
-            </p>
-            <div className="flex gap-3">
-              <a href="#" className="w-10 h-10 flex items-center justify-center text-muted-foreground bg-secondary rounded-full hover:text-white hover:bg-primary transition-all">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="w-10 h-10 flex items-center justify-center text-muted-foreground bg-secondary rounded-full hover:text-white hover:bg-primary transition-all">
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a href="#" className="w-10 h-10 flex items-center justify-center text-muted-foreground bg-secondary rounded-full hover:text-white hover:bg-primary transition-all">
-                <Instagram className="w-5 h-5" />
-              </a>
-            </div>
-          </motion.div>
-
-          {footerLinks.map((column, index) => (
-            <motion.div 
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
+            <a 
+              href="https://www.linkedin.com/company/cohorts-team" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
             >
-              <h4 className="text-sm font-semibold uppercase tracking-widest mb-4">
-                {column.title}
-              </h4>
-              <ul className="space-y-3">
-                {column.links.map((link, linkIndex) => (
-                  <li key={linkIndex}>
-                    <a href={link.href} className="text-muted-foreground hover:text-primary transition-colors">
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
-        </div>
+              <Linkedin className="w-5 h-5" />
+              Follow us on LinkedIn
+            </a>
+          </Button>
+        </motion.div>
 
-        <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/10 gap-4 text-sm text-muted-foreground">
+        <div className="text-center mt-8 pt-6 border-t border-[#F8F8FF]/10 text-sm text-[#F8F8FF]/50">
           <p>© {currentYear} Cohort. All rights reserved.</p>
-          <p>Made with <span className="text-primary">♥</span> for extraordinary people</p>
         </div>
       </div>
     </footer>
   );
 }
+

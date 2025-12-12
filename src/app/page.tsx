@@ -6,15 +6,24 @@ import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
-    <>
-      <main>
+    <div className="h-screen overflow-y-scroll snap-y snap-mandatory">
+      <section className="snap-start">
         <Hero />
+      </section>
+      <section className="snap-start">
         <About />
+      </section>
+      <section className="snap-start">
         <Features />
+      </section>
+      <section className="snap-start">
         <CTA />
-      </main>
-      <Footer />
-    </>
+      </section>
+      <section className="snap-start">
+        <Footer />
+      </section>
+    </div>
   );
 }
+
 

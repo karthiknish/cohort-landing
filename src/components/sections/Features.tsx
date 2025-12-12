@@ -2,83 +2,88 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Target, TrendingUp, Hammer, Trophy, LucideIcon } from 'lucide-react';
+import { BarChart3, Search, MessageSquare, FileText, CheckSquare, Users } from 'lucide-react';
 
 export default function Features() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const features: { number: string; title: string; description: string; icon: LucideIcon }[] = [
-    {
-      number: "01",
-      title: "Join the Cohort",
-      description: "Connect with like-minded individuals who share your passion for excellence and innovation.",
-      icon: Target
-    },
-    {
-      number: "02",
-      title: "Learn & Grow",
-      description: "Access exclusive resources, mentorship, and opportunities tailored to accelerate your growth.",
-      icon: TrendingUp
-    },
-    {
-      number: "03",
-      title: "Build Together",
-      description: "Collaborate on meaningful projects that push boundaries and create real impact.",
-      icon: Hammer
-    },
-    {
-      number: "04",
-      title: "Achieve More",
-      description: "Unlock your full potential with a supportive community that celebrates your success.",
-      icon: Trophy
-    }
+  const dashboardFeatures = [
+    { icon: BarChart3, label: "Track advertising performance" },
+    { icon: Search, label: "Review SEO metrics" },
+    { icon: MessageSquare, label: "Sentiment analysis" },
+    { icon: FileText, label: "Generate proposals" },
+    { icon: CheckSquare, label: "Monitor & assign tasks" },
+    { icon: Users, label: "Team communication" },
   ];
 
+
   return (
-    <section id="features" className="py-24 md:py-32 bg-[#111111]" ref={ref}>
-      <div className="max-w-4xl mx-auto px-6">
+    <section id="features" className="py-24 md:py-32 bg-[#001640]" ref={ref}>
+      <div className="max-w-5xl mx-auto px-6">
         <motion.div 
           className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-block px-4 py-1.5 text-sm font-semibold text-primary bg-primary/10 border border-primary/20 rounded-full mb-4 uppercase tracking-widest">
-            Features
+          <span className="inline-block px-4 py-1.5 text-sm font-semibold text-[#F8F8FF] bg-[#7389F4]/20 border border-[#7389F4]/30 rounded-full mb-4 uppercase tracking-widest">
+            Our Edge
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight">
-            How it <span className="bg-gradient-to-r from-primary to-orange-400 bg-clip-text text-transparent">works</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight text-[#F8F8FF] mb-6">
+            How are we <span className="text-[#7389F4]">different</span>?
           </h2>
+          <div className="text-lg text-[#F8F8FF]/80 max-w-3xl mx-auto leading-relaxed space-y-4">
+            <p>
+              We have built the <span className="font-bold text-[#7389F4]">Magic Dashboard</span>, a platform every marketeer wishes existed.
+            </p>
+            <p>
+              It allows you to track advertising performance on all platforms, review SEO metrics, sentiment analysis, generate proposals, monitor/assign tasks and communicate with your team, all in one place.
+            </p>
+          </div>
         </motion.div>
 
-        <div className="flex flex-col gap-4">
-          {features.map((feature, index) => {
+        {/* Dashboard Features Grid */}
+        <motion.div 
+          className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          {dashboardFeatures.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <motion.div 
+              <motion.div
                 key={index}
-                className="flex flex-col md:flex-row items-center gap-6 p-6 bg-gradient-to-br from-secondary/60 to-secondary/30 border border-white/10 rounded-xl hover:border-primary/30 hover:translate-x-2 transition-all"
-                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.6, delay: index * 0.15 }}
+                className="flex items-center gap-3 p-4 bg-[#F8F8FF]/10 border border-[#F8F8FF]/20 rounded-xl"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
               >
-                <div className="text-5xl font-black text-primary/60 min-w-[80px] text-center md:text-left">
-                  {feature.number}
+                <div className="w-10 h-10 rounded-lg bg-[#7389F4]/20 flex items-center justify-center shrink-0">
+                  <Icon className="w-5 h-5 text-[#7389F4]" />
                 </div>
-                <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-xl font-bold mb-1">{feature.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
-                </div>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Icon className="w-6 h-6 text-primary" />
-                </div>
+                <span className="text-sm font-medium text-[#F8F8FF]">{feature.label}</span>
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
+
+        {/* Value Proposition */}
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        >
+          <p className="text-lg text-[#F8F8FF]/80 max-w-2xl mx-auto">
+            An average agency spends <span className="font-bold text-[#F8F8FF]">£350 a month</span> on subscription tools. 
+            The Magic Dashboard is included as part of your service.
+          </p>
+        </motion.div>
       </div>
     </section>
   );
 }
+
 

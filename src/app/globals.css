@@ -1,8 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
-
-@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -27,32 +25,49 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --font-heading: 'Times New Roman Condensed', 'Times New Roman', Times, serif;
+  --font-body: "Red Hat Display", sans-serif;
 }
 
-/* Dark theme by default with orange accent */
+/* 
+  Color Palette:
+  - Navy: #001640 (primary, headings)
+  - Blue: #7389F4 (accent, highlights)
+  - Ghost White: #F8F8FF (background)
+  - Light Beige: #F1F1E6 (cards, secondary)
+*/
 :root {
   --radius: 0.625rem;
-  --background: #0A0A0A;
-  --foreground: #FFFFFF;
-  --card: #111111;
-  --card-foreground: #FFFFFF;
-  --popover: #111111;
-  --popover-foreground: #FFFFFF;
-  --primary: #FF6B35;
-  --primary-foreground: #FFFFFF;
-  --secondary: #1A1A1A;
-  --secondary-foreground: #FFFFFF;
-  --muted: #1A1A1A;
-  --muted-foreground: #A0A0A0;
-  --accent: #FF6B35;
-  --accent-foreground: #FFFFFF;
-  --destructive: #FF4444;
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.1);
-  --ring: #FF6B35;
+  --background: #F8F8FF;
+  --foreground: #001640;
+  --card: #F1F1E6;
+  --card-foreground: #001640;
+  --popover: #F8F8FF;
+  --popover-foreground: #001640;
+  --primary: #001640;
+  --primary-foreground: #F8F8FF;
+  --secondary: #F1F1E6;
+  --secondary-foreground: #001640;
+  --muted: #F1F1E6;
+  --muted-foreground: #001640;
+  --accent: #7389F4;
+  --accent-foreground: #F8F8FF;
+  --destructive: #DC2626;
+  --border: rgba(0, 22, 64, 0.15);
+  --input: rgba(0, 22, 64, 0.1);
+  --ring: #7389F4;
+  --hero-bg: #001640;
 }
 
 @layer base {
+  @font-face {
+    font-family: 'Times New Roman Condensed';
+    src: url('/fonts/Times New Roman MT Condensed Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
   * {
     @apply border-border;
   }
@@ -62,11 +77,19 @@
   }
   
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-body);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #001640;
   }
   
   ::selection {
-    @apply bg-primary text-primary-foreground;
+    @apply bg-accent text-accent-foreground;
   }
 }
 
@@ -80,10 +103,13 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--muted);
+  background: #7389F4;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--muted-foreground);
+  background: #001640;
 }
+
+
+

@@ -6,10 +6,10 @@ import LiquidChrome from '@/components/LiquidChrome';
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#001640]">
       {/* Liquid Chrome Background */}
       <LiquidChrome 
-        baseColor={[0.15, 0.08, 0.02]} 
+        baseColor={[0.0, 0.09, 0.25]} 
         speed={0.15}
         amplitude={0.4}
         frequencyX={2.5}
@@ -17,8 +17,8 @@ export default function Hero() {
         interactive={true}
       />
       
-      {/* Dark overlay for better logo visibility */}
-      <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+      {/* Slight overlay for better logo visibility */}
+      <div className="absolute inset-0 bg-[#001640]/40 pointer-events-none" />
       
       <motion.div 
         className="relative z-10"
