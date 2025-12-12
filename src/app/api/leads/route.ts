@@ -9,6 +9,11 @@ interface LeadData {
   company?: string;
 }
 
+interface LeadStatusUpdate {
+  id: string;
+  status: 'new' | 'contacted' | 'converted';
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body: LeadData = await request.json();
@@ -79,6 +84,56 @@ export async function GET() {
     return NextResponse.json({ leads });
   } catch (error) {
     console.error('Error fetching leads:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const body: LeadStatusUpdate = await request.json();
+
+    if (!body.id || !body.status) {
+      return NextResponse.json(
+        { error: 'Lead id and status are required' },
+        { status: 400 }
+      );
+    }
+
+    const allowedStatuses: Array<LeadStatusUpdate['status']> = [
+      'new',
+      'contacted',
+      'converted',
+    ];
+
+    if (!allowedStatuses.includes(body.status)) {
+      return NextResponse.json(
+        { error: 'Invalid status' },
+        { status: 400 }
+      );
+    }
+
+    const db = getAdminFirestore();
+    const docRef = db.collection('leads').doc(body.id);
+
+    const existing = await docRef.get();
+    if (!existing.exists) {
+      return NextResponse.json(
+        { error: 'Lead not found' },
+        { status: 404 }
+      );
+    }
+
+    await docRef.update({
+      status: body.status,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error updating lead:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

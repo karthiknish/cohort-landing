@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/components/AdminAuthProvider';
@@ -8,6 +9,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Table,
   TableBody,
@@ -28,6 +37,8 @@ interface Lead {
   createdAt: string;
 }
 
+type LeadStatus = Lead['status'];
+
 export default function LeadsPage() {
   const { user, loading: authLoading, logout } = useAuth();
   const router = useRouter();
@@ -35,6 +46,11 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
+  const [statusDraft, setStatusDraft] = useState<LeadStatus>('new');
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [statusUpdateError, setStatusUpdateError] = useState<string>('');
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -122,6 +138,51 @@ export default function LeadsPage() {
     link.click();
   };
 
+  const openLeadModal = (lead: Lead) => {
+    setSelectedLead(lead);
+    setStatusDraft(lead.status);
+    setStatusUpdateError('');
+    setIsLeadModalOpen(true);
+  };
+
+  const closeLeadModal = () => {
+    setIsLeadModalOpen(false);
+  };
+
+  const updateLeadStatus = async () => {
+    if (!selectedLead) return;
+
+    setIsUpdatingStatus(true);
+    setStatusUpdateError('');
+
+    try {
+      const response = await fetch('/api/leads', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: selectedLead.id, status: statusDraft }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || 'Failed to update status');
+      }
+
+      setLeads((prev) =>
+        prev.map((lead) =>
+          lead.id === selectedLead.id ? { ...lead, status: statusDraft } : lead
+        )
+      );
+      setSelectedLead((prev) => (prev ? { ...prev, status: statusDraft } : prev));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to update status';
+      setStatusUpdateError(message);
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -136,9 +197,100 @@ export default function LeadsPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Dialog
+        open={isLeadModalOpen}
+        onOpenChange={(open) => {
+          setIsLeadModalOpen(open);
+          if (!open) {
+            setSelectedLead(null);
+            setStatusUpdateError('');
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[560px]">
+          <DialogHeader>
+            <DialogTitle>Lead details</DialogTitle>
+            <DialogDescription>
+              {selectedLead ? `Submitted ${formatDate(selectedLead.createdAt)}` : ' '}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedLead ? (
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <div className="text-sm text-muted-foreground">Name</div>
+                <div className="font-medium">{selectedLead.name || '-'}</div>
+              </div>
+
+              <div className="grid gap-2">
+                <div className="text-sm text-muted-foreground">Email</div>
+                <a
+                  href={`mailto:${selectedLead.email}`}
+                  className="font-medium text-primary hover:underline"
+                >
+                  {selectedLead.email || '-'}
+                </a>
+              </div>
+
+              <div className="grid gap-2">
+                <div className="text-sm text-muted-foreground">Phone</div>
+                <div className="font-medium">{selectedLead.phone || '-'}</div>
+              </div>
+
+              <div className="grid gap-2">
+                <div className="text-sm text-muted-foreground">Company</div>
+                <div className="font-medium">{selectedLead.company || '-'}</div>
+              </div>
+
+              <div className="grid gap-2">
+                <div className="text-sm text-muted-foreground">Status</div>
+                <div className="flex items-center gap-3">
+                  <select
+                    value={statusDraft}
+                    onChange={(e) => setStatusDraft(e.target.value as LeadStatus)}
+                    className="px-3 py-2 bg-secondary border border-border rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    disabled={isUpdatingStatus}
+                  >
+                    <option value="new">New</option>
+                    <option value="contacted">Contacted</option>
+                    <option value="converted">Converted</option>
+                  </select>
+                  <Badge variant={getStatusVariant(statusDraft)} className="uppercase text-xs">
+                    {statusDraft}
+                  </Badge>
+                </div>
+
+                {statusUpdateError ? (
+                  <div className="text-sm text-destructive">{statusUpdateError}</div>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
+
+          <DialogFooter>
+            {selectedLead ? (
+              <Button
+                onClick={updateLeadStatus}
+                disabled={isUpdatingStatus || !selectedLead || statusDraft === selectedLead.status}
+              >
+                {isUpdatingStatus ? 'Saving…' : 'Save status'}
+              </Button>
+            ) : null}
+            {selectedLead?.email ? (
+              <Button asChild>
+                <a href={`mailto:${selectedLead.email}`}>Email</a>
+              </Button>
+            ) : null}
+            <Button variant="outline" onClick={closeLeadModal}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <header className="flex justify-between items-center px-6 py-4 border-b border-white/10 bg-card">
         <div className="flex items-center gap-4">
-          <a href="/" className="text-xl font-black tracking-widest text-primary">COHORT</a>
+          <Link href="/" className="text-xl font-black tracking-widest text-primary">COHORT</Link>
           <span className="text-muted-foreground">/</span>
           <h1 className="text-lg font-semibold">Leads Dashboard</h1>
         </div>
@@ -186,7 +338,7 @@ export default function LeadsPage() {
           <select 
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 bg-secondary border border-white/10 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-4 py-2 bg-secondary border border-border rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <option value="all">All Status</option>
             <option value="new">New</option>
@@ -225,10 +377,26 @@ export default function LeadsPage() {
               </TableHeader>
               <TableBody>
                 {filteredLeads.map((lead) => (
-                  <TableRow key={lead.id} className="border-white/10 hover:bg-primary/5">
+                  <TableRow
+                    key={lead.id}
+                    className="border-white/10 hover:bg-primary/5 cursor-pointer"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => openLeadModal(lead)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openLeadModal(lead);
+                      }
+                    }}
+                  >
                     <TableCell className="font-medium">{lead.name}</TableCell>
                     <TableCell>
-                      <a href={`mailto:${lead.email}`} className="text-primary hover:underline">
+                      <a
+                        href={`mailto:${lead.email}`}
+                        className="text-primary hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         {lead.email}
                       </a>
                     </TableCell>
