@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
+import { Inter, Red_Hat_Display } from "next/font/google"; // Assuming Inter was default or just add Red_Hat_Display
 import "./globals.css";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
+
+const redHat = Red_Hat_Display({ 
+  subsets: ["latin"],
+  variable: "--font-redhat" 
+});
 
 export const metadata: Metadata = {
   title: "Cohort | Build the Future Together",
@@ -20,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={redHat.variable}>
         <AnalyticsProvider>
           {children}
         </AnalyticsProvider>

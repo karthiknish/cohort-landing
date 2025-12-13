@@ -6,7 +6,7 @@ import LiquidChrome from '@/components/LiquidChrome';
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#001640]">
+    <section className="relative z-20 min-h-screen snap-start snap-stop-always flex items-center justify-center overflow-hidden bg-[#001640]">
       {/* Liquid Chrome Background */}
       <LiquidChrome 
         baseColor={[0.0, 0.09, 0.25]} 

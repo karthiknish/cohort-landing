@@ -81,6 +81,7 @@
   
   html {
     scroll-behavior: smooth;
+    @apply snap-y snap-mandatory;
   }
   
   body {
@@ -97,6 +98,36 @@
   
   ::selection {
     @apply bg-accent text-accent-foreground;
+  }
+}
+/* Performance Optimizations */
+section,
+footer {
+  contain: layout style paint;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Smooth scroll behavior for programmatic scrolling */
+html {
+  scroll-behavior: auto; /* JS handles smooth scrolling */
+}
+
+/* GPU acceleration for animated elements */
+.motion-safe\:translate-z-0 {
+  transform: translateZ(0);
+}
+
+@layer utilities {
+  .snap-stop-always {
+    scroll-snap-stop: always;
+  }
+  
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
   }
 }
 

@@ -15,7 +15,7 @@ export default function CTA() {
 
   return (
     <>
-      <section id="contact" className="relative py-24 md:py-32 overflow-hidden" ref={ref}>
+      <section id="contact" className="min-h-screen snap-start snap-stop-always flex flex-col justify-center relative py-24 md:py-32 overflow-hidden" ref={ref}>
         {/* DotGrid Background */}
         <DotGrid 
           dotSize={4}

@@ -1,145 +1,80 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useInView, Variants } from 'framer-motion';
-import Image from 'next/image';
+import { motion, useInView } from 'framer-motion';
 
 export default function About() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const ethos = [
-    {
-      title: "4x4 Work Week",
-      description: "Prioritise efficiency.",
-      image: "/ethos/efficiency.png",
-      colSpan: "md:col-span-2"
-    },
-    {
-      title: "Collective Intelligence",
-      description: "None of us is as smart as all of us.",
-      image: "/ethos/intelligence.png",
-      colSpan: "md:col-span-1"
-    },
-    {
-      title: "Great Culture",
-      description: "Good work, good place to work.",
-      image: "/ethos/culture.png",
-      colSpan: "md:col-span-1"
-    },
-    {
-      title: "Dedicated Focus",
-      description: "One cohort, one client.",
-      image: "/ethos/focus.png",
-      colSpan: "md:col-span-2"
-    },
-    {
-      title: "Purpose Driven",
-      description: "Purpose over profit.",
-      image: "/ethos/purpose.png",
-      colSpan: "md:col-span-3"
-    }
-  ];
-
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 30, scale: 0.95 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 20
-      }
-    },
-  };
-
   return (
-    <section id="about" className="py-24 md:py-32" ref={ref}>
-      <div className="max-w-6xl mx-auto px-6">
-        {/* What are we trying to build? */}
-        <motion.div 
-          className="text-center mb-24"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          <span className="inline-block px-4 py-1.5 text-sm font-semibold text-[#001640] bg-[#7389F4]/10 border border-[#7389F4]/30 rounded-full mb-4 uppercase tracking-widest">
-            About Us
-          </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-normal leading-tight mb-6">
-            What are we trying to <span className="text-[#7389F4]">build</span>?
-          </h2>
-          <div className="text-lg text-[#001640]/80 max-w-4xl mx-auto leading-relaxed space-y-6">
-            <p>
-              Agencies face capacity issues, burnout, slow hiring cycles, inconsistent freelancers or outsourced partners, communication gaps, and high overheads that come with in-house teams.
-            </p>
-            <p>
-              We are building ad tech products to improve the way agencies operate. Work with talent from anywhere in the world without heavy overhead. Work with experts who have scaled brands and been part of the advertising Big Six.
-            </p>
-            <p className="text-xl">
-              Blend years of agency experience with innovative technology, and you get <span className="font-bold text-[#7389F4]">cohorts.team</span>.
-            </p>
-          </div>
-        </motion.div>
+    <section id="about" ref={ref} className="min-h-screen snap-start snap-stop-always flex flex-col justify-start bg-[#fffcf3] relative z-10">
+      {/* What are we trying to build? - Matching Canva Design */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-0 pb-24 lg:pb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-stretch">
+          {/* Left Column - Card and Who Indicator */}
+          <div className="lg:col-span-5 flex flex-col relative z-20">
+            <motion.div
+              className="flex-1 rounded-b-[3rem] rounded-t-none border-x border-b border-t-0 border-[#001640] p-10 md:p-12 flex flex-col justify-end min-h-[600px] relative overflow-hidden bg-[#fffcf3] -mt-8"
+              initial={{ opacity: 0, x: -30 }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.6 }}
+            >
+              {/* Title aligned to bottom */}
+              <h2 className="text-5xl md:text-6xl lg:text-[4.5rem] font-normal leading-[1.1] text-[#001640] tracking-tight mt-auto">
+                What are we trying to <br />
+                <span className="text-[#004aad] italic font-serif">build</span>?
+              </h2>
+            </motion.div>
 
-        {/* Our Ethos - Bento Grid */}
-        <div className="bg-[#001640] rounded-3xl p-8 md:p-12">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-center mb-12"
-          >
-            <h3 className="text-3xl md:text-4xl font-normal text-[#F8F8FF]">Our Ethos</h3>
-          </motion.div>
-          
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-          >
-            {ethos.map((value, index) => {
-              return (
-                <motion.div 
-                  key={index}
-                  variants={itemVariants}
-                  className={`${value.colSpan} group relative overflow-hidden rounded-2xl bg-[#001640] border border-[#F8F8FF]/10 hover:border-[#7389F4]/50 transition-all duration-300 isolate`}
+            {/* Who Indicator - Outside the box */}
+            <motion.div 
+              className="flex items-center justify-center gap-4 mt-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <span className="text-base font-medium text-[#001640] tracking-wide">Who</span>
+              <div className="w-10 h-10 rounded-full border border-[#001640] flex items-center justify-center">
+                <svg 
+                  width="20" 
+                  height="20" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="1.5"
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  className="text-[#001640]"
                 >
-                  {/* Background Image */}
-                  <div className="absolute inset-0 z-0">
-                    <Image
-                      src={value.image}
-                      alt={value.title}
-                      fill
-                      className="object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#001640] via-[#001640]/50 to-transparent opacity-90 group-hover:opacity-80 transition-opacity duration-300" />
-                  </div>
+                  <path d="M7 17L17 17L17 7" />
+                  <line x1="7" y1="7" x2="17" y2="17" />
+                </svg>
+              </div>
+            </motion.div>
+          </div>
 
-                  <div className="relative z-10 p-8 h-full flex flex-col justify-end min-h-[240px]">
-                    <div className="translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                      <h4 className="text-2xl text-[#F8F8FF] mb-2">{value.title}</h4>
-                      <p className="text-[#F8F8FF]/80 leading-relaxed font-medium">{value.description}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
+          {/* Right Column - Content */}
+          <div className="lg:col-span-7 flex flex-col justify-center">
+            <motion.div
+              className="space-y-8 max-w-2xl"
+              initial={{ opacity: 0, x: 30 }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <p className="text-lg md:text-xl text-[#001640] leading-[1.6] text-justify font-normal">
+                Modern agencies are under pressure to do more for less. Hiring great talent is slow, expensive, and risky. Freelancers are inconsistent, outsourced partners lack context, and in-house teams burn out under growing workloads and overheads.
+              </p>
+              
+              <p className="text-lg md:text-xl text-[#001640] leading-[1.6] text-justify italic font-normal">
+                We exist to fix that.
+              </p>
+              
+              <p className="text-lg md:text-xl text-[#001640] leading-[1.6] text-justify font-normal">
+                Our purpose is to remove the friction between ambition and execution. Hand-pick and hire a dedicated expert team (<span className="italic text-[#004aad]">cohort</span>), at the cost of hiring one resource. Built by seasoned agency people and powered by ad-tech, designed to remove the friction between ambition and execution.
+              </p>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
