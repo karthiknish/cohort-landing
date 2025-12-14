@@ -2,19 +2,17 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import LiquidChrome from '@/components/LiquidChrome';
 
 export default function Hero() {
   return (
-    <section className="relative z-20 min-h-screen flex items-center justify-center overflow-hidden bg-[#001640]">
-      {/* Liquid Chrome Background */}
-      <LiquidChrome 
-        baseColor={[0.0, 0.09, 0.25]} 
-        speed={0.15}
-        amplitude={0.4}
-        frequencyX={2.5}
-        frequencyY={2.5}
-        interactive={true}
+    <section className="relative z-20 min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#001640]">
+      {/* Background Image */}
+      <Image
+        src="/background.jpeg"
+        alt="Background"
+        fill
+        priority
+        className="object-cover"
       />
       
       {/* Slight overlay for better logo visibility */}
@@ -38,8 +36,32 @@ export default function Hero() {
           className="w-48 sm:w-64 md:w-80 lg:w-96 h-auto"
         />
       </motion.div>
+
+      {/* Purpose Indicator at bottom */}
+      <motion.div 
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 1.2 }}
+      >
+        <span className="text-base font-medium text-[#F8F8FF] tracking-wide">Purpose</span>
+        <div className="w-10 h-10 rounded-full border border-[#F8F8FF] flex items-center justify-center">
+          <svg 
+            width="20" 
+            height="20" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="1.5"
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+            className="text-[#F8F8FF]"
+          >
+            <path d="M12 5v14" />
+            <path d="M19 12l-7 7-7-7" />
+          </svg>
+        </div>
+      </motion.div>
     </section>
   );
 }
-
-

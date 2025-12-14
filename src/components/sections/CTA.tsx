@@ -42,10 +42,10 @@ export default function CTA() {
           >
             <Card className="bg-[#F1F1E6] border-[#001640]/10 shadow-xl">
               <CardContent className="text-center p-10 md:p-16">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-normal leading-tight mb-4">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-normal leading-tight mb-6">
                   Keen to know more about <span className="text-[#7389F4]">us</span>?
                 </h2>
-                <p className="text-muted-foreground text-lg max-w-xl mx-auto mb-8 leading-relaxed">
+                <p className="text-muted-foreground text-xl md:text-2xl max-w-xl mx-auto mb-10 leading-relaxed">
                   Download our brochure to learn more about how we can help you 
                   achieve extraordinary things together.
                 </p>

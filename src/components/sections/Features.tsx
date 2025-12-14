@@ -20,11 +20,11 @@ export default function Features() {
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6 }}
             >
-              <p className="text-lg md:text-xl text-[#001640] leading-[1.6] text-justify font-normal">
+              <p className="text-2xl md:text-3xl text-[#001640] leading-[1.6] text-justify font-normal">
                 We have built the <span className="text-[#004aad] italic font-serif">Magic Dashboard</span>, a platform every marketeer wishes existed. It allows you to track advertising performance on all platforms, review SEO metrics, sentiment analysis, generate proposals, monitor/assign tasks and communicate with your team, all in one place.
               </p>
               
-              <p className="text-lg md:text-xl text-[#001640] leading-[1.6] text-justify font-normal">
+              <p className="text-2xl md:text-3xl text-[#001640] leading-[1.6] text-justify font-normal">
                 A dashboard like this saves 4 hours in a marketeer's day. An <span className="text-[#004aad]">average agency spends £350</span> a month on subscriptions to tools. The Magic Dashboard is included as part of your service and costs <span className="text-[#004aad] font-bold">£0</span>.
               </p>
             </motion.div>
