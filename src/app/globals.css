@@ -131,22 +131,41 @@ html {
   }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - hidden by default, visible on hover */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #7389F4;
+  background: transparent;
   border-radius: 9999px;
+  transition: background 0.3s ease;
 }
 
-::-webkit-scrollbar-thumb:hover {
+/* Show scrollbar on container hover */
+.scroll-container:hover::-webkit-scrollbar-thumb,
+div[class*="overflow-y-scroll"]:hover::-webkit-scrollbar-thumb {
+  background: #7389F4;
+}
+
+.scroll-container:hover::-webkit-scrollbar-thumb:hover,
+div[class*="overflow-y-scroll"]:hover::-webkit-scrollbar-thumb:hover {
   background: #001640;
+}
+
+/* Snappy scroll container */
+.snap-scroll-container {
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+.snap-scroll-container > * {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 

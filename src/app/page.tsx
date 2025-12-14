@@ -130,7 +130,7 @@ export default function Home() {
   return (
     <div 
       ref={containerRef}
-      className="h-screen overflow-hidden touch-none"
+      className="h-screen overflow-y-scroll touch-none scroll-smooth snap-y snap-mandatory"
     >
       <Hero />
       <About />
