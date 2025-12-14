@@ -12,7 +12,7 @@ export default function Ethos() {
     <section 
       id="ethos" 
       ref={ref} 
-      className="min-h-screen snap-start snap-stop-always flex flex-col justify-start relative z-0"
+      className="min-h-screen flex flex-col justify-start relative z-0"
     >
       <div className="absolute inset-0">
         <GradientBlinds

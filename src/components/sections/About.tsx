@@ -8,7 +8,7 @@ export default function About() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="about" ref={ref} className="min-h-screen snap-start snap-stop-always flex flex-col justify-start bg-[#fffcf3] relative z-10">
+    <section id="about" ref={ref} className="min-h-screen flex flex-col justify-start bg-[#fffcf3] relative z-10">
       {/* What are we trying to build? - Matching Canva Design */}
       <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-0 pb-24 lg:pb-32">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-stretch">

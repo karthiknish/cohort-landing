@@ -9,7 +9,7 @@ export default function Features() {
 
 
   return (
-    <section id="features" className="bg-[#fffcf3] min-h-screen snap-start snap-stop-always flex flex-col justify-center py-24 md:pb-32 lg:pb-40" ref={ref}>
+    <section id="features" className="bg-[#fffcf3] min-h-screen flex flex-col justify-center py-24 md:pb-32 lg:pb-40" ref={ref}>
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-stretch">
           {/* Left Column - Text Content */}

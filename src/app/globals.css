@@ -109,9 +109,9 @@ footer {
   backface-visibility: hidden;
 }
 
-/* Smooth scroll behavior for programmatic scrolling */
+/* Smooth scroll behavior */
 html {
-  scroll-behavior: auto; /* JS handles smooth scrolling */
+  scroll-behavior: smooth;
 }
 
 /* GPU acceleration for animated elements */
@@ -120,10 +120,6 @@ html {
 }
 
 @layer utilities {
-  .snap-stop-always {
-    scroll-snap-stop: always;
-  }
-  
   .gpu-accelerated {
     transform: translateZ(0);
     backface-visibility: hidden;
@@ -131,42 +127,20 @@ html {
   }
 }
 
-/* Custom scrollbar - hidden by default, visible on hover */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--background);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: transparent;
-  border-radius: 9999px;
-  transition: background 0.3s ease;
-}
-
-/* Show scrollbar on container hover */
-.scroll-container:hover::-webkit-scrollbar-thumb,
-div[class*="overflow-y-scroll"]:hover::-webkit-scrollbar-thumb {
   background: #7389F4;
+  border-radius: 9999px;
 }
 
-.scroll-container:hover::-webkit-scrollbar-thumb:hover,
-div[class*="overflow-y-scroll"]:hover::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
   background: #001640;
 }
-
-/* Snappy scroll container */
-.snap-scroll-container {
-  scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
-}
-
-.snap-scroll-container > * {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-}
-
-
-
