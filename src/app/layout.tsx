@@ -9,11 +9,11 @@ const redHat = Red_Hat_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Cohort | Build the Future Together",
+  title: "Cohorts.team | More for less",
   description: "Cohort is on a mission to bring together the most talented individuals to create extraordinary things. Join our community and start building the future.",
   keywords: ["cohort", "community", "talent", "innovation", "creative"],
   openGraph: {
-    title: "Cohort | Build the Future Together",
+    title: "Cohorts.team | More for less",
     description: "Join the most talented community building the future.",
     type: "website",
   },
