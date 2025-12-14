@@ -9,8 +9,8 @@ export default function Features() {
 
 
   return (
-    <section id="features" className="bg-[#fffcf3] min-h-screen flex flex-col justify-center py-24 md:pb-32 lg:pb-40" ref={ref}>
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <section id="features" className="bg-[#fffcf3] min-h-screen flex flex-col justify-center py-24 md:pb-32 lg:pb-40 overflow-hidden" ref={ref}>
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 relative w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-stretch">
           
           {/* Mobile Title - Shown only on mobile, before paragraphs */}
@@ -72,22 +72,25 @@ export default function Features() {
             </motion.div>
           </div>
 
-          {/* Right Column - Title Card (desktop only, bleeds to right edge) */}
-          <div className="hidden lg:flex lg:col-span-5 flex-col lg:-mr-12 xl:-mr-24">
-            <motion.div
-              className="flex-1 rounded-l-[3rem] rounded-r-none border-y border-l border-r-0 border-[#001640] p-10 md:p-12 lg:pr-0 flex flex-col justify-center min-h-[500px] relative overflow-hidden bg-[#fffcf3]"
-              initial={{ opacity: 0, x: 30 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <h2 className="text-5xl md:text-6xl lg:text-[4.5rem] font-normal leading-[1.1] text-[#001640] tracking-tight">
-                What makes us <br />
-                <span className="text-[#004aad]">different</span>?
-              </h2>
-            </motion.div>
-          </div>
+          {/* Right Column - Placeholder for grid alignment */}
+          <div className="hidden lg:block lg:col-span-5" />
         </div>
       </div>
+
+      {/* Title Card - Positioned absolutely to bleed to right edge */}
+      <motion.div
+        className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 w-[40%] xl:w-[35%]"
+        initial={{ opacity: 0, x: 50 }}
+        animate={isInView ? { opacity: 1, x: 0 } : {}}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        <div className="flex-1 rounded-l-[3rem] rounded-r-none border-y border-l border-r-0 border-[#001640] p-10 md:p-12 flex flex-col justify-center min-h-[700px] relative overflow-hidden bg-[#fffcf3]">
+          <h2 className="text-5xl md:text-6xl lg:text-[4.5rem] font-normal leading-[1.1] text-[#001640] tracking-tight">
+            What makes us <br />
+            <span className="text-[#004aad]">different</span>?
+          </h2>
+        </div>
+      </motion.div>
     </section>
   );
 }
