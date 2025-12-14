@@ -12,6 +12,22 @@ export default function Features() {
     <section id="features" className="bg-[#fffcf3] min-h-screen flex flex-col justify-center py-24 md:pb-32 lg:pb-40" ref={ref}>
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-stretch">
+          
+          {/* Mobile Title - Shown only on mobile, before paragraphs */}
+          <div className="lg:hidden -mt-24">
+            <motion.div
+              className="rounded-b-[2rem] rounded-t-none border-x border-b border-t-0 border-[#001640] p-8 flex flex-col justify-end min-h-[300px] bg-[#fffcf3]"
+              initial={{ opacity: 0, y: -30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-4xl font-normal leading-[1.1] text-[#001640] tracking-tight mt-auto">
+                What makes us <br />
+                <span className="text-[#004aad]">different</span>?
+              </h2>
+            </motion.div>
+          </div>
+
           {/* Left Column - Text Content */}
           <div className="lg:col-span-7 flex flex-col justify-center">
             <motion.div 
@@ -56,8 +72,8 @@ export default function Features() {
             </motion.div>
           </div>
 
-          {/* Right Column - Title Card (bleeds to right edge) */}
-          <div className="lg:col-span-5 flex flex-col lg:-mr-12 xl:-mr-24">
+          {/* Right Column - Title Card (desktop only, bleeds to right edge) */}
+          <div className="hidden lg:flex lg:col-span-5 flex-col lg:-mr-12 xl:-mr-24">
             <motion.div
               className="flex-1 rounded-l-[3rem] rounded-r-none border-y border-l border-r-0 border-[#001640] p-10 md:p-12 lg:pr-0 flex flex-col justify-center min-h-[500px] relative overflow-hidden bg-[#fffcf3]"
               initial={{ opacity: 0, x: 30 }}
@@ -65,7 +81,7 @@ export default function Features() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <h2 className="text-5xl md:text-6xl lg:text-[4.5rem] font-normal leading-[1.1] text-[#001640] tracking-tight">
-                What <span className="inline-block ml-4 md:ml-8">makes</span> <span className="inline-block ml-16 md:ml-24">us</span> <br />
+                What makes us <br />
                 <span className="text-[#004aad]">different</span>?
               </h2>
             </motion.div>
@@ -75,5 +91,3 @@ export default function Features() {
     </section>
   );
 }
-
-
