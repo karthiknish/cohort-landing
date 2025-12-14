@@ -57,7 +57,7 @@ export default function Ethos() {
                 ].map((item, index) => (
                   <motion.p 
                     key={index}
-                    className="text-xl md:text-2xl lg:text-3xl text-[#F8F8FF] font-light tracking-wide text-center"
+                    className="text-xl md:text-2xl lg:text-3xl text-[#F8F8FF] font-light tracking-wide text-left"
                     initial={{ opacity: 0, y: 20 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}

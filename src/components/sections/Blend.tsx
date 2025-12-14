@@ -36,8 +36,8 @@ export default function Blend() {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            {/* Image container - cropped at top on desktop only */}
-            <div className="relative rounded-b-[2rem] lg:rounded-t-none rounded-t-[2rem] overflow-hidden h-[300px] md:h-[400px] lg:-mt-24">
+            {/* Image container */}
+            <div className="relative rounded-[2rem] overflow-hidden h-[300px] md:h-[400px]">
               <Image
                 src="/background.jpeg"
                 alt="Innovative technology"
