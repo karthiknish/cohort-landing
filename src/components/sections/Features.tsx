@@ -21,7 +21,7 @@ export default function Features() {
               transition={{ duration: 0.6 }}
             >
               <p className="text-2xl md:text-3xl text-[#001640] leading-[1.6] text-justify font-normal">
-                We have built the <span className="text-[#004aad] italic font-serif">Magic Dashboard</span>, a platform every marketeer wishes existed. It allows you to track advertising performance on all platforms, review SEO metrics, sentiment analysis, generate proposals, monitor/assign tasks and communicate with your team, all in one place.
+                We have built the <span className="text-[#004aad]">Magic Dashboard</span>, a platform every marketeer wishes existed. It allows you to track advertising performance on all platforms, review SEO metrics, sentiment analysis, generate proposals, monitor/assign tasks and communicate with your team, all in one place.
               </p>
               
               <p className="text-2xl md:text-3xl text-[#001640] leading-[1.6] text-justify font-normal">
@@ -57,7 +57,7 @@ export default function Features() {
           </div>
 
           {/* Right Column - Title Card (bleeds to right edge) */}
-          <div className="lg:col-span-5 flex flex-col lg:-mr-6 xl:-mr-12">
+          <div className="lg:col-span-5 flex flex-col lg:-mr-12 xl:-mr-24">
             <motion.div
               className="flex-1 rounded-l-[3rem] rounded-r-none border-y border-l border-r-0 border-[#001640] p-10 md:p-12 lg:pr-0 flex flex-col justify-center min-h-[500px] relative overflow-hidden bg-[#fffcf3]"
               initial={{ opacity: 0, x: 30 }}
@@ -66,7 +66,7 @@ export default function Features() {
             >
               <h2 className="text-5xl md:text-6xl lg:text-[4.5rem] font-normal leading-[1.1] text-[#001640] tracking-tight">
                 What <span className="inline-block ml-4 md:ml-8">makes</span> <span className="inline-block ml-16 md:ml-24">us</span> <br />
-                <span className="text-[#004aad] italic font-serif">different</span>?
+                <span className="text-[#004aad]">different</span>?
               </h2>
             </motion.div>
           </div>

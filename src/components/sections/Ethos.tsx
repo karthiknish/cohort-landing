@@ -30,9 +30,9 @@ export default function Ethos() {
           mixBlendMode="normal"
         />
       </div>
-      <div className="max-w-6xl mx-auto px-6 relative z-10 pt-0 pb-24 md:pb-32">
+      <div className="w-full px-12 lg:px-24 mx-auto relative z-10 pt-0 pb-24 md:pb-32">
         {/* Glassy Card Layout - Cropped top to appear emerging from above */}
-        <div className="relative rounded-b-[3rem] rounded-t-none border-x border-b border-t-0 border-[#F8F8FF]/30 p-12 md:p-16 lg:p-20 overflow-hidden min-h-[600px] flex flex-col -mt-8">
+        <div className="relative rounded-b-[3rem] rounded-t-none border-x border-b border-t-0 border-[#F8F8FF]/30 p-12 md:p-16 lg:p-20 overflow-hidden min-h-[700px] flex flex-col -mt-8">
           {/* Background Gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-[#fffcf3]/10 via-[#fffcf3]/5 to-transparent backdrop-blur-sm pointer-events-none" />
           

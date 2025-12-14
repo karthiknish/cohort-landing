@@ -32,7 +32,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --font-heading: 'Times New Roman Condensed', 'Times New Roman', Times, serif;
+  --font-heading: "Red Hat Display", sans-serif;
   --font-body: "Red Hat Display", sans-serif;
 }
 

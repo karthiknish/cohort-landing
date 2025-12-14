@@ -3,10 +3,10 @@
 import { useState, useRef } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Download } from 'lucide-react';
+import { Download, Linkedin } from 'lucide-react';
 import BrochureModal from '../BrochureModal';
 import DotGrid from '../DotGrid';
+import Image from 'next/image';
 
 export default function CTA() {
   const ref = useRef(null);
@@ -15,7 +15,7 @@ export default function CTA() {
 
   return (
     <>
-      <section id="contact" className="min-h-screen flex flex-col justify-center relative py-24 md:py-32 overflow-hidden" ref={ref}>
+      <section id="contact" className="min-h-screen flex flex-col relative bg-[#fffcf3] overflow-hidden" ref={ref}>
         {/* DotGrid Background */}
         <DotGrid 
           dotSize={4}
@@ -28,39 +28,82 @@ export default function CTA() {
           returnDuration={1.2}
         />
         
-        {/* Background pattern */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute bottom-0 left-[20%] w-96 h-96 bg-[#7389F4]/10 rounded-full blur-[100px]" />
-          <div className="absolute top-0 right-[20%] w-64 h-64 bg-[#001640]/10 rounded-full blur-[80px]" />
+        {/* Top Content Area */}
+        <div className="relative z-10 flex-1 flex flex-col justify-center py-16 md:py-24">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6 }}
+              className="mb-8"
+            >
+              <h2 className="text-5xl md:text-6xl lg:text-[4.5rem] font-normal leading-[1.1] text-[#001640] tracking-tight">
+                Keen to know <br />
+                <span className="text-[#004aad]">more</span>?
+              </h2>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="flex items-center gap-4"
+            >
+              <span className="text-lg md:text-xl text-[#001640]">Reach out to us on</span>
+              <a 
+                href="https://www.linkedin.com/company/cohorts-team" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-[#001640] flex items-center justify-center hover:bg-[#001640]/80 transition-colors"
+              >
+                <Linkedin className="w-5 h-5 text-white" />
+              </a>
+            </motion.div>
+          </div>
         </div>
-        
-        <div className="relative max-w-4xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.6 }}
-          >
-            <Card className="bg-[#F1F1E6] border-[#001640]/10 shadow-xl">
-              <CardContent className="text-center p-10 md:p-16">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-normal leading-tight mb-6">
-                  Keen to know more about <span className="text-[#7389F4]">us</span>?
-                </h2>
-                <p className="text-muted-foreground text-xl md:text-2xl max-w-xl mx-auto mb-10 leading-relaxed">
-                  Download our brochure to learn more about how we can help you 
-                  achieve extraordinary things together.
-                </p>
+
+        {/* Bottom Card - Full Width Bleed with Background Image */}
+        <motion.div 
+          className="relative z-10 w-full -mx-0"
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <div className="relative rounded-t-[3rem] border-t border-x border-[#001640]/20 overflow-hidden min-h-[300px] md:min-h-[350px]">
+            {/* Background Image */}
+            <Image
+              src="/background.jpeg"
+              alt="Background"
+              fill
+              className="object-cover"
+            />
+            
+            {/* Glassy Overlay */}
+            <div className="absolute inset-0 bg-[#001640]/30 backdrop-blur-sm" />
+            
+            {/* Content */}
+            <div className="relative z-10 p-8 md:p-12 lg:p-16 flex flex-col items-start justify-center h-full min-h-[300px] md:min-h-[350px]">
+              <div className="max-w-md">
                 <Button 
                   onClick={() => setIsModalOpen(true)}
-                  size="lg"
-                  className="bg-[#001640] hover:bg-[#001640]/90 text-[#F8F8FF] font-semibold text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all"
+                  variant="ghost"
+                  className="text-[#F8F8FF] hover:text-[#F8F8FF] hover:bg-white/10 text-lg px-0 flex items-center gap-3"
                 >
-                  <Download className="mr-2 h-5 w-5" />
                   Download Brochure
+                  <div className="w-10 h-10 rounded-full border border-[#F8F8FF] flex items-center justify-center">
+                    <Download className="w-5 h-5" />
+                  </div>
                 </Button>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
+              </div>
+            </div>
+
+            {/* Footer Content - Inside the card */}
+            <div className="absolute bottom-4 left-0 right-0 px-8 md:px-12 lg:px-16 flex justify-between items-center text-sm text-[#F8F8FF]/70">
+              <p>© {new Date().getFullYear()} Cohortsteam. All rights reserved.</p>
+              <p>Made with <span className="text-red-500">❤</span> for Ad agencies</p>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       <AnimatePresence>

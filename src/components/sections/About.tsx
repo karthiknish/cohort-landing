@@ -10,12 +10,12 @@ export default function About() {
   return (
     <section id="about" ref={ref} className="min-h-screen flex flex-col justify-start bg-[#fffcf3] relative z-10">
       {/* What are we trying to build? - Matching Canva Design */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-0 pb-24 lg:pb-32">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-stretch">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 pb-24 lg:pb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-stretch">
           {/* Left Column - Card (hidden on mobile, shown on desktop) */}
-          <div className="hidden lg:flex lg:col-span-5 flex-col relative z-20">
+          <div className="hidden lg:flex lg:col-span-6 flex-col relative z-20">
             <motion.div
-              className="flex-1 rounded-b-[3rem] rounded-t-none border-x border-b border-t-0 border-[#001640] p-10 md:p-12 flex flex-col justify-end min-h-[600px] relative overflow-hidden bg-[#fffcf3] -mt-8"
+              className="flex-1 rounded-b-[3rem] rounded-t-none border-x border-b border-t-0 border-[#001640] p-10 md:p-12 flex flex-col justify-end min-h-[700px] relative overflow-hidden bg-[#fffcf3] -mt-24"
               initial={{ opacity: 0, x: -30 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6 }}
@@ -23,7 +23,7 @@ export default function About() {
               {/* Title aligned to bottom */}
               <h2 className="text-5xl md:text-6xl lg:text-[4.5rem] font-normal leading-[1.1] text-[#001640] tracking-tight mt-auto">
                 What are we trying to <br />
-                <span className="text-[#004aad] italic font-serif">build</span>?
+                <span className="text-[#004aad]">build</span>?
               </h2>
             </motion.div>
 
@@ -64,13 +64,13 @@ export default function About() {
             >
               <h2 className="text-4xl font-normal leading-[1.1] text-[#001640] tracking-tight mt-auto">
                 What are we trying to <br />
-                <span className="text-[#004aad] italic font-serif">build</span>?
+                <span className="text-[#004aad]">build</span>?
               </h2>
             </motion.div>
           </div>
 
           {/* Right Column - Content */}
-          <div className="lg:col-span-7 flex flex-col justify-center">
+          <div className="lg:col-span-6 flex flex-col justify-start pt-16 lg:pt-24">
             <motion.div
               className="space-y-8 max-w-2xl"
               initial={{ opacity: 0, x: 30 }}
