@@ -15,7 +15,7 @@ export default function About() {
           {/* Left Column - Card (hidden on mobile, shown on desktop) */}
           <div className="hidden lg:flex lg:col-span-6 flex-col relative z-20">
             <motion.div
-              className="flex-1 rounded-b-[3rem] rounded-t-none border-x border-b border-t-0 border-[#001640] p-10 md:p-12 flex flex-col justify-end min-h-[700px] relative overflow-hidden bg-[#fffcf3] -mt-24"
+              className="rounded-b-[3rem] rounded-t-none border-x border-b border-t-0 border-[#001640] p-10 md:p-12 flex flex-col justify-end h-[800px] relative overflow-hidden bg-[#fffcf3] -mt-32"
               initial={{ opacity: 0, x: -30 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6 }}

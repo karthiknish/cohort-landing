@@ -15,10 +15,10 @@ export default function Blend() {
       className="min-h-[70vh] flex flex-col justify-center bg-[#fffcf3] relative z-10"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16 md:py-24 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-end">
           {/* Left Column - Text Content */}
           <motion.div
-            className="space-y-6 pt-8 lg:pt-16"
+            className="space-y-6 pb-8"
             initial={{ opacity: 0, x: -30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6 }}

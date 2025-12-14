@@ -87,7 +87,7 @@ export default function CTA() {
                 <Button 
                   onClick={() => setIsModalOpen(true)}
                   variant="ghost"
-                  className="text-[#F8F8FF] hover:text-[#F8F8FF] hover:bg-white/10 text-lg px-0 flex items-center gap-3"
+                  className="text-[#F8F8FF] hover:text-[#F8F8FF] hover:bg-white/10 text-lg py-4 px-6 -ml-6 flex items-center gap-3 rounded-full"
                 >
                   Download Brochure
                   <div className="w-10 h-10 rounded-full border border-[#F8F8FF] flex items-center justify-center">
