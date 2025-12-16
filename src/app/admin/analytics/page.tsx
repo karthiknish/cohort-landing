@@ -20,6 +20,7 @@ import {
   DevicesChart,
   CountriesChart,
   RealtimeMapChart,
+  BrochureAnalyticsCard,
   Ga4OverviewResponse,
   toTick,
 } from '@/components/analytics';
@@ -243,6 +244,14 @@ export default function AnalyticsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <CountriesChart data={countries} />
               <DevicesChart data={devices} />
+            </div>
+
+            {/* Brochure Download Analytics */}
+            <div className="mt-8">
+              <h2 className="text-xl font-bold mb-4">Brochure Download Analytics</h2>
+              <div className="grid grid-cols-1">
+                {authToken && <BrochureAnalyticsCard authToken={authToken} days={typeof selectedDays === 'number' ? selectedDays : 30} />}
+              </div>
             </div>
           </>
         )}

@@ -6,4 +6,5 @@ export { default as TopEventsChart } from './TopEventsChart';
 export { default as DevicesChart } from './DevicesChart';
 export { default as CountriesChart } from './CountriesChart';
 export { default as RealtimeMapChart } from './RealtimeMapChart';
+export { default as BrochureAnalyticsCard } from './BrochureAnalyticsCard';
 export * from './types';

@@ -5,6 +5,54 @@ import { getAdminAuth } from '@/lib/firebase-admin';
 
 const propertyId = process.env.GA4_PROPERTY_ID;
 
+// ============================================
+// In-memory cache to reduce GA4 API calls
+// ============================================
+const CACHE_TTL_MS = 45 * 1000; // 45 seconds cache TTL
+
+interface CachedResponse {
+  data: {
+    totalActiveUsers: number;
+    countries: Array<{ country: string; countryCode: string; activeUsers: number }>;
+    pages: Array<{ page: string; activeUsers: number }>;
+    sources: Array<{ source: string; activeUsers: number }>;
+    timestamp: string;
+    cached: boolean;
+    cacheAge?: number;
+  };
+  cachedAt: number;
+}
+
+let realtimeCache: CachedResponse | null = null;
+
+function getCachedResponse(): CachedResponse['data'] | null {
+  if (!realtimeCache) return null;
+  
+  const now = Date.now();
+  const age = now - realtimeCache.cachedAt;
+  
+  if (age > CACHE_TTL_MS) {
+    // Cache expired
+    realtimeCache = null;
+    return null;
+  }
+  
+  // Return cached data with cache age info
+  return {
+    ...realtimeCache.data,
+    cached: true,
+    cacheAge: Math.round(age / 1000),
+  };
+}
+
+function setCachedResponse(data: Omit<CachedResponse['data'], 'cached' | 'cacheAge'>) {
+  realtimeCache = {
+    data: { ...data, cached: false },
+    cachedAt: Date.now(),
+  };
+}
+
+
 // Map common country names to ISO 3166-1 alpha-2 codes
 const COUNTRY_NAME_TO_CODE: Record<string, string> = {
   'United States': 'US',
@@ -100,6 +148,12 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    // Check cache first to reduce API calls
+    const cachedData = getCachedResponse();
+    if (cachedData) {
+      return NextResponse.json(cachedData);
+    }
+
     const analyticsDataClient = new BetaAnalyticsDataClient({ credentials });
 
     // Run multiple realtime reports in parallel
@@ -165,13 +219,20 @@ export async function GET(req: NextRequest) {
       activeUsers: parseInt(row.metricValues?.[0]?.value || '0', 10),
     }));
 
-    return NextResponse.json({
+    // Build response data
+    const responseData = {
       totalActiveUsers,
       countries,
       pages,
       sources,
       timestamp: new Date().toISOString(),
-    });
+      cached: false,
+    };
+
+    // Cache the response for future requests
+    setCachedResponse(responseData);
+
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error('GA4 Realtime API error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
