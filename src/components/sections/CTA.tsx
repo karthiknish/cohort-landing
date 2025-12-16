@@ -7,6 +7,7 @@ import { Download, Linkedin } from 'lucide-react';
 import BrochureModal from '../BrochureModal';
 import DotGrid from '../DotGrid';
 import Image from 'next/image';
+import { trackEvent } from '@/lib/analytics-ingest';
 
 export default function CTA() {
   const ref = useRef(null);
@@ -54,6 +55,9 @@ export default function CTA() {
                 href="https://www.linkedin.com/company/cohorts-team" 
                 target="_blank" 
                 rel="noopener noreferrer"
+                onClick={() => {
+                  trackEvent('external_link_clicked', { url: 'https://www.linkedin.com/company/cohorts-team', location: 'cta' });
+                }}
                 className="w-10 h-10 rounded-full bg-[#001640] flex items-center justify-center hover:bg-[#001640]/80 transition-colors"
               >
                 <Linkedin className="w-5 h-5 text-white" />
@@ -85,7 +89,10 @@ export default function CTA() {
             <div className="relative z-10 p-8 md:p-12 lg:p-16 flex flex-col items-start justify-center h-full min-h-[300px] md:min-h-[350px]">
               <div className="max-w-md">
                 <Button 
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => {
+                    trackEvent('cta_clicked', { cta_name: 'download_brochure', location: 'cta' });
+                    setIsModalOpen(true);
+                  }}
                   variant="ghost"
                   className="text-[#F8F8FF] hover:text-[#F8F8FF] hover:bg-white/10 text-lg py-4 px-6 -ml-6 flex items-center gap-3 rounded-full"
                 >
@@ -108,7 +115,7 @@ export default function CTA() {
 
       <AnimatePresence>
         {isModalOpen && (
-          <BrochureModal onClose={() => setIsModalOpen(false)} />
+          <BrochureModal source="cta" onClose={() => setIsModalOpen(false)} />
         )}
       </AnimatePresence>
     </>

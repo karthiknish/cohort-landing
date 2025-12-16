@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import TotalViews from '@/components/TotalViews';
 
 export default function Hero() {
   return (
@@ -35,6 +36,15 @@ export default function Hero() {
           priority
           className="w-48 sm:w-64 md:w-80 lg:w-96 h-auto"
         />
+      </motion.div>
+
+      <motion.div
+        className="absolute top-6 right-6 z-10 rounded-2xl border border-white/10 bg-black/25 backdrop-blur-md px-4 py-3"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 1.0 }}
+      >
+        <TotalViews />
       </motion.div>
 
       {/* Purpose Indicator at bottom */}

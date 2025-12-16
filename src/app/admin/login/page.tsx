@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, ArrowLeft } from 'lucide-react';
+import { trackEvent } from '@/lib/analytics-ingest';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
@@ -23,11 +24,15 @@ export default function AdminLoginPage() {
     setError('');
     setLoading(true);
 
+    trackEvent('admin_login_attempt');
+
     try {
       await login(email, password);
-      router.push('/admin/leads');
+      trackEvent('admin_login_success');
+      router.push('/admin');
     } catch (err) {
       setError('Invalid email or password');
+      trackEvent('admin_login_failed');
       console.error('Login error:', err);
     } finally {
       setLoading(false);

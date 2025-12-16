@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { trackEvent } from '@/lib/analytics-ingest';
 import {
   Dialog,
   DialogContent,
@@ -77,6 +78,7 @@ export default function LeadsPage() {
       });
       const data = await response.json();
       setLeads(data.leads || []);
+      trackEvent('admin_leads_loaded', { count: Array.isArray(data.leads) ? data.leads.length : 0 });
     } catch (error) {
       console.error('Error fetching leads:', error);
     } finally {
@@ -85,6 +87,7 @@ export default function LeadsPage() {
   };
 
   const handleLogout = async () => {
+    trackEvent('admin_logout');
     await logout();
     router.push('/admin/login');
   };
@@ -127,6 +130,13 @@ export default function LeadsPage() {
   });
 
   const exportToCSV = () => {
+    trackEvent('admin_leads_export_csv', {
+      count: filteredLeads.length,
+      statusFilter,
+      hasSearch: Boolean(searchTerm),
+      searchLength: searchTerm.length,
+    });
+
     const headers = ['Name', 'Email', 'Phone', 'Company', 'Status', 'Created At'];
     const csvData = filteredLeads.map(lead => [
       lead.name,
@@ -149,6 +159,7 @@ export default function LeadsPage() {
   };
 
   const openLeadModal = (lead: Lead) => {
+    trackEvent('admin_lead_viewed', { status: lead.status });
     setSelectedLead(lead);
     setStatusDraft(lead.status);
     setStatusUpdateError('');
@@ -187,6 +198,11 @@ export default function LeadsPage() {
         )
       );
       setSelectedLead((prev) => (prev ? { ...prev, status: statusDraft } : prev));
+
+      trackEvent('admin_lead_status_updated', {
+        from: selectedLead.status,
+        to: statusDraft,
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to update status';
       setStatusUpdateError(message);
@@ -232,6 +248,10 @@ export default function LeadsPage() {
 
       setIsDeleteConfirmOpen(false);
       setDeleteTarget(null);
+
+      trackEvent('admin_lead_deleted', {
+        previousStatus: deleteTarget.status,
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to delete lead';
       setDeleteError(message);
@@ -413,6 +433,13 @@ export default function LeadsPage() {
           <Link href="/" className="text-xl font-black tracking-widest text-primary">COHORT</Link>
           <span className="text-muted-foreground">/</span>
           <h1 className="text-lg font-semibold">Leads Dashboard</h1>
+          <span className="text-muted-foreground">·</span>
+          <Link
+            href="/admin/analytics"
+            className="text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
+            Analytics
+          </Link>
         </div>
         <Button variant="outline" onClick={handleLogout} className="gap-2">
           <LogOut className="w-4 h-4" />

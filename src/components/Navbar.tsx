@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import BrochureModal from './BrochureModal';
+import { trackEvent } from '@/lib/analytics-ingest';
 
 export default function Navbar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,7 +40,10 @@ export default function Navbar() {
           </div>
 
           <Button 
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {
+              trackEvent('cta_clicked', { cta_name: 'download_brochure', location: 'navbar' });
+              setIsModalOpen(true);
+            }}
             className="bg-primary hover:bg-primary/90 text-white font-semibold shadow-[0_0_20px_rgba(255,107,53,0.3)] hover:shadow-[0_0_30px_rgba(255,107,53,0.4)] transition-all"
           >
             Download Brochure
@@ -49,7 +53,7 @@ export default function Navbar() {
 
       <AnimatePresence>
         {isModalOpen && (
-          <BrochureModal onClose={() => setIsModalOpen(false)} />
+          <BrochureModal source="navbar" onClose={() => setIsModalOpen(false)} />
         )}
       </AnimatePresence>
     </>

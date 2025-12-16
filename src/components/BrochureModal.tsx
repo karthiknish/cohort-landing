@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,9 +13,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { X, Check, Loader2 } from 'lucide-react';
+import { trackEvent } from '@/lib/analytics-ingest';
 
 interface BrochureModalProps {
   onClose: () => void;
+  source?: string;
 }
 
 interface FormData {
@@ -26,7 +28,7 @@ interface FormData {
   website: string; // Honeypot field - should remain empty
 }
 
-export default function BrochureModal({ onClose }: BrochureModalProps) {
+export default function BrochureModal({ onClose, source }: BrochureModalProps) {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -39,6 +41,10 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
   const [error, setError] = useState('');
   const [formLoadTime] = useState(Date.now()); // Track when form opened
 
+  useEffect(() => {
+    trackEvent('brochure_modal_opened', { source: source || 'unknown' });
+  }, [source]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -48,6 +54,7 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
     // 1. Honeypot field should be empty (bots fill it)
     if (formData.website) {
       console.warn('Honeypot triggered');
+      trackEvent('lead_submit_blocked', { reason: 'honeypot', source: source || 'unknown' });
       setIsSuccess(true); // Fake success for bots
       return;
     }
@@ -56,12 +63,20 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
     const timeTaken = Date.now() - formLoadTime;
     if (timeTaken < 3000) {
       console.warn('Form submitted too quickly');
+      trackEvent('lead_submit_blocked', { reason: 'too_fast', timeTakenMs: timeTaken, source: source || 'unknown' });
       setError('Please take a moment to fill out the form.');
       setIsSubmitting(false);
       return;
     }
 
     try {
+      trackEvent('lead_submit_started', {
+        source: source || 'unknown',
+        hasPhone: Boolean(formData.phone),
+        hasCompany: Boolean(formData.company),
+        timeTakenMs: timeTaken,
+      });
+
       const { website, ...submitData } = formData; // Exclude honeypot from submission
       const response = await fetch('/api/leads', {
         method: 'POST',
@@ -72,8 +87,12 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
       });
 
       if (!response.ok) {
+        trackEvent('lead_submit_failed', { reason: 'http_error', status: response.status, source: source || 'unknown' });
         throw new Error('Failed to submit form');
       }
+
+      const payload = (await response.json().catch(() => null)) as { emailSent?: boolean } | null;
+      trackEvent('lead_submit_success', { emailSent: Boolean(payload?.emailSent), source: source || 'unknown' });
 
       setIsSuccess(true);
 
@@ -83,6 +102,7 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
       }, 4000);
     } catch (err) {
       setError('Something went wrong. Please try again.');
+      trackEvent('lead_submit_failed', { reason: 'exception', source: source || 'unknown' });
       console.error('Form submission error:', err);
     } finally {
       setIsSubmitting(false);
@@ -97,7 +117,15 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
   };
 
   return (
-    <Dialog open={true} onOpenChange={onClose}>
+    <Dialog
+      open={true}
+      onOpenChange={(open) => {
+        if (!open) {
+          trackEvent('brochure_modal_closed', { source: source || 'unknown' });
+          onClose();
+        }
+      }}
+    >
       <DialogContent className="sm:max-w-[450px] bg-[#F8F8FF] border-[#001640]/10">
         {isSuccess ? (
           <motion.div 
