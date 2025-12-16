@@ -4,6 +4,14 @@ import { logAnalyticsEvent } from '@/lib/analytics';
 
 type JsonRecord = Record<string, unknown>;
 
+/**
+ * Check if current page is an admin page that should be excluded from analytics.
+ */
+function isAdminPage(): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.location.pathname.startsWith('/admin');
+}
+
 function safeString(value: unknown, maxLen: number) {
   if (typeof value !== 'string') return undefined;
   const trimmed = value.trim();
@@ -32,6 +40,9 @@ export function getOrCreateSessionId() {
 
 export async function trackServerEvent(name: string, props?: JsonRecord) {
   if (typeof window === 'undefined') return;
+  
+  // Skip analytics on admin pages
+  if (isAdminPage()) return;
 
   const payload = {
     name: safeString(name, 64) || name,
@@ -66,6 +77,9 @@ export async function trackServerEvent(name: string, props?: JsonRecord) {
 }
 
 export function trackEvent(name: string, props?: JsonRecord) {
+  // Skip analytics on admin pages
+  if (isAdminPage()) return;
+  
   try {
     logAnalyticsEvent(name, props);
   } catch {
