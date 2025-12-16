@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminFirestore } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
-import { sendBrochureEmail } from '@/lib/brevo';
+import { sendBrochureEmail, sendAdminNotification } from '@/lib/brevo';
 
 interface LeadData {
   name: string;
@@ -61,6 +61,14 @@ export async function POST(request: NextRequest) {
         emailSentAt: FieldValue.serverTimestamp(),
         emailMessageId: emailResult.messageId || null,
       });
+
+      // Send admin notification (don't block on this)
+      sendAdminNotification({
+        name: body.name,
+        email: body.email,
+        phone: body.phone,
+        company: body.company,
+      }).catch(err => console.error('Admin notification failed:', err));
     } else {
       // Mark as spam if email fails
       await docRef.update({

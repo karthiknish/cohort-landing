@@ -126,3 +126,131 @@ export async function sendBrochureEmail(
     };
   }
 }
+
+interface LeadInfo {
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+}
+
+/**
+ * Send admin notification email when a new lead is received
+ */
+export async function sendAdminNotification(
+  lead: LeadInfo
+): Promise<SendEmailResponse> {
+  const apiKey = process.env.BREVO_API_KEY;
+  const adminEmail = 'deepak@cohorts.team';
+
+  if (!apiKey) {
+    console.error('BREVO_API_KEY is not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  try {
+    const emailPayload: BrevoEmailPayload = {
+      sender: {
+        name: 'Cohorts Lead Notification',
+        email: 'noreply@cohorts.team',
+      },
+      to: [
+        {
+          email: adminEmail,
+          name: 'Deepak',
+        },
+      ],
+      subject: `📥 New Lead: ${lead.name}`,
+      htmlContent: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="font-family: 'Red Hat Display', Arial, sans-serif; margin: 0; padding: 40px 20px; background-color: #f5f5f5;">
+          <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; padding: 40px; border: 1px solid #e5e5e5;">
+            <h1 style="color: #001640; font-size: 24px; margin-bottom: 24px;">🎉 New Lead Received!</h1>
+            
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #666; font-size: 14px; width: 120px;">Name</td>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #001640; font-size: 16px; font-weight: 600;">${lead.name}</td>
+              </tr>
+              <tr>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #666; font-size: 14px;">Email</td>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #004aad; font-size: 16px;">
+                  <a href="mailto:${lead.email}" style="color: #004aad; text-decoration: none;">${lead.email}</a>
+                </td>
+              </tr>
+              ${lead.phone ? `
+              <tr>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #666; font-size: 14px;">Phone</td>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #001640; font-size: 16px;">
+                  <a href="tel:${lead.phone}" style="color: #004aad; text-decoration: none;">${lead.phone}</a>
+                </td>
+              </tr>
+              ` : ''}
+              ${lead.company ? `
+              <tr>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #666; font-size: 14px;">Company</td>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #001640; font-size: 16px;">${lead.company}</td>
+              </tr>
+              ` : ''}
+              <tr>
+                <td style="padding: 12px 0; color: #666; font-size: 14px;">Time</td>
+                <td style="padding: 12px 0; color: #001640; font-size: 16px;">${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</td>
+              </tr>
+            </table>
+            
+            <div style="margin-top: 24px; padding: 16px; background-color: #f0f7ff; border-radius: 8px;">
+              <p style="margin: 0; color: #004aad; font-size: 14px;">
+                The brochure has been automatically sent to the lead's email address.
+              </p>
+            </div>
+            
+            <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 30px 0;">
+            
+            <p style="color: #666; font-size: 12px; text-align: center; margin: 0;">
+              This is an automated notification from Cohorts.team
+            </p>
+          </div>
+        </body>
+        </html>
+      `,
+    };
+
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': apiKey,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(emailPayload),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Brevo API error (admin notification):', errorData);
+      return {
+        success: false,
+        error: errorData.message || 'Failed to send admin notification',
+      };
+    }
+
+    const data = await response.json();
+    console.log('Admin notification sent successfully:', data);
+
+    return {
+      success: true,
+      messageId: data.messageId,
+    };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
