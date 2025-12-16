@@ -3,9 +3,12 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { format, differenceInDays } from 'date-fns';
+import { DateRange } from 'react-day-picker';
 import { useAuth } from '@/components/AdminAuthProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { Loader2, LogOut, Calendar } from 'lucide-react';
 
 import {
@@ -20,13 +23,6 @@ import {
   toTick,
 } from '@/components/analytics';
 
-const DATE_RANGES = [
-  { label: '7 days', value: 7 },
-  { label: '14 days', value: 14 },
-  { label: '30 days', value: 30 },
-  { label: '90 days', value: 90 },
-];
-
 export default function AnalyticsPage() {
   const { user, loading: authLoading, logout } = useAuth();
   const router = useRouter();
@@ -34,7 +30,8 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [overview, setOverview] = useState<Ga4OverviewResponse | null>(null);
-  const [selectedDays, setSelectedDays] = useState(30);
+  const [selectedDays, setSelectedDays] = useState<number | 'custom'>(30);
+  const [customRange, setCustomRange] = useState<DateRange | undefined>(undefined);
 
   const [authToken, setAuthToken] = useState<string>('');
 
@@ -51,7 +48,7 @@ export default function AnalyticsPage() {
     }
   }, [user]);
 
-  const fetchAnalytics = useCallback(async (days: number) => {
+  const fetchAnalytics = useCallback(async (days: number | 'custom', range?: DateRange) => {
     if (!user) return;
 
     setLoading(true);
@@ -59,7 +56,17 @@ export default function AnalyticsPage() {
 
     try {
       const token = await user.getIdToken();
-      const res = await fetch(`/api/analytics/ga4/overview?days=${days}`, {
+      
+      let url = '/api/analytics/ga4/overview';
+      if (days === 'custom' && range?.from && range?.to) {
+        const startDate = format(range.from, 'yyyy-MM-dd');
+        const endDate = format(range.to, 'yyyy-MM-dd');
+        url += `?startDate=${startDate}&endDate=${endDate}`;
+      } else if (typeof days === 'number') {
+        url += `?days=${days}`;
+      }
+      
+      const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -80,13 +87,33 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     if (user) {
-      fetchAnalytics(selectedDays);
+      fetchAnalytics(selectedDays, customRange);
     }
-  }, [user, selectedDays, fetchAnalytics]);
+  }, [user, selectedDays, customRange, fetchAnalytics]);
+
+  const handleSelectPreset = (days: number) => {
+    setSelectedDays(days);
+    setCustomRange(undefined);
+  };
+
+  const handleSelectCustomRange = (range: DateRange | undefined) => {
+    if (range?.from && range?.to) {
+      setCustomRange(range);
+      setSelectedDays('custom');
+    }
+  };
 
   // Computed stats
   const stats = useMemo(() => {
-    const days = overview?.windowDays || selectedDays;
+    let days: number;
+    if (selectedDays === 'custom' && customRange?.from && customRange?.to) {
+      days = differenceInDays(customRange.to, customRange.from) + 1;
+    } else if (typeof selectedDays === 'number') {
+      days = selectedDays;
+    } else {
+      days = overview?.windowDays || 30;
+    }
+    
     const views = overview?.totals?.views || 0;
     const users = overview?.totals?.users || 0;
     const sessions = overview?.totals?.sessions || 0;
@@ -94,7 +121,7 @@ export default function AnalyticsPage() {
     const engagementRate = sessions ? Math.round((engagedSessions / sessions) * 100) : 0;
 
     return { days, views, users, sessions, engagedSessions, engagementRate };
-  }, [overview, selectedDays]);
+  }, [overview, selectedDays, customRange]);
 
   // Timeseries with labels
   const dailySeries = useMemo(() => {
@@ -156,24 +183,18 @@ export default function AnalyticsPage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Date Range Selector */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="w-4 h-4" />
             <span className="text-sm">Date Range</span>
           </div>
-          <div className="flex gap-2">
-            {DATE_RANGES.map((range) => (
-              <Button
-                key={range.value}
-                variant={selectedDays === range.value ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedDays(range.value)}
-                disabled={loading}
-              >
-                {range.label}
-              </Button>
-            ))}
-          </div>
+          <DateRangePicker
+            selectedDays={selectedDays}
+            customRange={customRange}
+            onSelectPreset={handleSelectPreset}
+            onSelectCustomRange={handleSelectCustomRange}
+            disabled={loading}
+          />
         </div>
 
         {loading ? (

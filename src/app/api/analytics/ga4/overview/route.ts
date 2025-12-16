@@ -34,6 +34,10 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
+    
+    // Support both preset days and custom date range
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
     const days = Math.min(Math.max(Number(searchParams.get('days') || '30'), 1), 90);
 
     const propertyId = process.env.GA4_PROPERTY_ID || process.env.GOOGLE_ANALYTICS_PROPERTY_ID;
@@ -53,7 +57,11 @@ export async function GET(request: NextRequest) {
     });
 
     const property = `properties/${propertyId}`;
-    const dateRanges = [{ startDate: `${days}daysAgo`, endDate: 'today' }];
+    
+    // Use custom date range if provided, otherwise use days preset
+    const dateRanges = startDate && endDate
+      ? [{ startDate, endDate }]
+      : [{ startDate: `${days}daysAgo`, endDate: 'today' }];
 
     const [timeseriesReport, topPagesReport, sourcesReport, eventsReport, devicesReport] = await Promise.all([
       client.runReport({
@@ -134,10 +142,12 @@ export async function GET(request: NextRequest) {
       sessions: numberOrZero(row.metricValues?.[0]?.value),
     }));
 
-    const topEvents = (eventsReport[0].rows || []).map((row) => ({
-      name: row.dimensionValues?.[0]?.value || '(not set)',
-      count: numberOrZero(row.metricValues?.[0]?.value),
-    }));
+    const topEvents = (eventsReport[0].rows || [])
+      .map((row) => ({
+        name: row.dimensionValues?.[0]?.value || '(not set)',
+        count: numberOrZero(row.metricValues?.[0]?.value),
+      }))
+      .filter((e) => !e.name.toLowerCase().includes('admin'));
 
     const devices = (devicesReport[0].rows || []).map((row) => ({
       device: row.dimensionValues?.[0]?.value || '(not set)',
