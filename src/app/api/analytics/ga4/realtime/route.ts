@@ -134,10 +134,12 @@ export async function GET(req: NextRequest) {
     ]);
 
     // Parse total active users
-    const totalActiveUsers = parseInt(
+    // Subtract 1 to exclude the admin currently viewing this dashboard
+    const rawActiveUsers = parseInt(
       activeUsersReport[0]?.rows?.[0]?.metricValues?.[0]?.value || '0',
       10
     );
+    const totalActiveUsers = Math.max(0, rawActiveUsers - 1);
 
     // Parse countries and map to ISO codes
     const countries = (countryReport[0]?.rows || []).map((row) => {
