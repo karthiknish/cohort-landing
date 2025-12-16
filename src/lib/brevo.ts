@@ -53,12 +53,21 @@ export async function sendBrochureEmail(
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            /* Email clients vary in font support; provide fallbacks */
+            @font-face {
+              font-family: 'Times New Roman Condensed';
+              src: url('https://cohorts.team/fonts/Times%20New%20Roman%20MT%20Condensed%20Regular.otf') format('opentype');
+              font-weight: 400;
+              font-style: normal;
+            }
+          </style>
         </head>
         <body style="font-family: 'Red Hat Display', Arial, sans-serif; margin: 0; padding: 40px 20px; background-color: #fffcf3;">
           <div style="max-width: 600px; margin: 0 auto;">
             <!-- Header with logo -->
             <div style="text-align: center; margin-bottom: 30px;">
-              <img src="https://www.cohorts.team/logo_blue.svg" alt="cohorts.team" style="height: 40px; margin-bottom: 8px;" />
+              <div style="font-family: 'Times New Roman Condensed', 'Times New Roman', Times, serif; font-size: 36px; font-weight: 400; letter-spacing: 0.6px; color: #004aad; line-height: 1; margin-bottom: 8px;">cohorts.team</div>
               <p style="color: #004aad; font-size: 14px; margin: 0;">More for less</p>
             </div>
             
@@ -181,12 +190,21 @@ export async function sendAdminNotification(
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            /* Email clients vary in font support; provide fallbacks */
+            @font-face {
+              font-family: 'Times New Roman Condensed';
+              src: url('https://cohorts.team/fonts/Times%20New%20Roman%20MT%20Condensed%20Regular.otf') format('opentype');
+              font-weight: 400;
+              font-style: normal;
+            }
+          </style>
         </head>
         <body style="font-family: 'Red Hat Display', Arial, sans-serif; margin: 0; padding: 40px 20px; background-color: #fffcf3;">
           <div style="max-width: 600px; margin: 0 auto;">
             <!-- Header -->
             <div style="text-align: center; margin-bottom: 30px;">
-              <img src="https://cohorts.team/logo_white.svg" alt="cohorts.team" style="height: 40px; margin-bottom: 8px;" />
+              <div style="font-family: 'Times New Roman Condensed', 'Times New Roman', Times, serif; font-size: 36px; font-weight: 400; letter-spacing: 0.6px; color: #004aad; line-height: 1; margin-bottom: 8px;">cohorts.team</div>
               <p style="color: #004aad; font-size: 14px; margin: 0;">Lead Notification</p>
             </div>
             

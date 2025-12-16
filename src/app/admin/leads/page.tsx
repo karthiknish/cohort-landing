@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Download, LogOut, Loader2 } from 'lucide-react';
+import { Search, Download, LogOut, Loader2, Trash2 } from 'lucide-react';
 
 interface Lead {
   id: string;
@@ -52,6 +52,11 @@ export default function LeadsPage() {
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [statusUpdateError, setStatusUpdateError] = useState<string>('');
 
+  const [deleteTarget, setDeleteTarget] = useState<Lead | null>(null);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string>('');
+
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/admin/login');
@@ -66,7 +71,10 @@ export default function LeadsPage() {
 
   const fetchLeads = async () => {
     try {
-      const response = await fetch('/api/leads');
+      const token = await user?.getIdToken();
+      const response = await fetch('/api/leads', {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
       const data = await response.json();
       setLeads(data.leads || []);
     } catch (error) {
@@ -156,10 +164,12 @@ export default function LeadsPage() {
     setStatusUpdateError('');
 
     try {
+      const token = await user?.getIdToken();
       const response = await fetch('/api/leads', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({ id: selectedLead.id, status: statusDraft }),
       });
@@ -183,6 +193,51 @@ export default function LeadsPage() {
     }
   };
 
+  const openDeleteConfirm = (lead: Lead) => {
+    setDeleteTarget(lead);
+    setDeleteError('');
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const deleteLead = async () => {
+    if (!deleteTarget) return;
+
+    setIsDeleting(true);
+    setDeleteError('');
+
+    try {
+      const token = await user?.getIdToken();
+      const response = await fetch('/api/leads', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ id: deleteTarget.id }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || 'Failed to delete lead');
+      }
+
+      setLeads((prev) => prev.filter((l) => l.id !== deleteTarget.id));
+
+      if (selectedLead?.id === deleteTarget.id) {
+        setIsLeadModalOpen(false);
+        setSelectedLead(null);
+      }
+
+      setIsDeleteConfirmOpen(false);
+      setDeleteTarget(null);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to delete lead';
+      setDeleteError(message);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -197,6 +252,59 @@ export default function LeadsPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Dialog
+        open={isDeleteConfirmOpen}
+        onOpenChange={(open) => {
+          setIsDeleteConfirmOpen(open);
+          if (!open) {
+            setDeleteTarget(null);
+            setDeleteError('');
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[520px]">
+          <DialogHeader>
+            <DialogTitle>Delete lead</DialogTitle>
+            <DialogDescription>
+              This will permanently delete the lead record.
+            </DialogDescription>
+          </DialogHeader>
+
+          {deleteTarget ? (
+            <div className="grid gap-2 text-sm">
+              <div>
+                <span className="text-muted-foreground">Name:</span>{' '}
+                <span className="font-medium">{deleteTarget.name}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Email:</span>{' '}
+                <span className="font-medium">{deleteTarget.email}</span>
+              </div>
+              {deleteError ? (
+                <div className="text-destructive">{deleteError}</div>
+              ) : null}
+            </div>
+          ) : null}
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteConfirmOpen(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={deleteLead}
+              disabled={isDeleting || !deleteTarget}
+            >
+              {isDeleting ? 'Deleting…' : 'Delete'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog
         open={isLeadModalOpen}
         onOpenChange={(open) => {
@@ -268,6 +376,15 @@ export default function LeadsPage() {
           ) : null}
 
           <DialogFooter>
+            {selectedLead ? (
+              <Button
+                variant="destructive"
+                onClick={() => openDeleteConfirm(selectedLead)}
+                disabled={isUpdatingStatus}
+              >
+                Delete
+              </Button>
+            ) : null}
             {selectedLead ? (
               <Button
                 onClick={updateLeadStatus}
@@ -373,6 +490,7 @@ export default function LeadsPage() {
                   <TableHead>Company</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Created</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -409,6 +527,19 @@ export default function LeadsPage() {
                     </TableCell>
                     <TableCell className="text-muted-foreground text-sm">
                       {formatDate(lead.createdAt)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="destructive"
+                        size="icon-sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openDeleteConfirm(lead);
+                        }}
+                        aria-label={`Delete ${lead.name}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

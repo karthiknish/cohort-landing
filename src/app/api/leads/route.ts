@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminFirestore } from '@/lib/firebase-admin';
+import { getAdminAuth } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { sendBrochureEmail, sendAdminNotification } from '@/lib/brevo';
 
@@ -13,6 +14,19 @@ interface LeadData {
 interface LeadStatusUpdate {
   id: string;
   status: 'new' | 'contacted' | 'converted' | 'spam';
+}
+
+async function verifyAdminRequest(request: NextRequest) {
+  const authHeader = request.headers.get('authorization') || '';
+  const match = authHeader.match(/^Bearer\s+(.+)$/i);
+  if (!match) return null;
+
+  try {
+    const token = match[1];
+    return await getAdminAuth().verifyIdToken(token);
+  } catch {
+    return null;
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -100,8 +114,15 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    // Admin-only
+    // (POST remains public so leads can be submitted from the website)
+    const decoded = await verifyAdminRequest(request);
+    if (!decoded) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const db = getAdminFirestore();
     
     const snapshot = await db
@@ -128,6 +149,11 @@ export async function GET() {
 
 export async function PATCH(request: NextRequest) {
   try {
+    const decoded = await verifyAdminRequest(request);
+    if (!decoded) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body: LeadStatusUpdate = await request.json();
 
     if (!body.id || !body.status) {
@@ -170,6 +196,46 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error updating lead:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const decoded = await verifyAdminRequest(request);
+    if (!decoded) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = (await request.json().catch(() => null)) as { id?: string } | null;
+    const id = body?.id;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Lead id is required' },
+        { status: 400 }
+      );
+    }
+
+    const db = getAdminFirestore();
+    const docRef = db.collection('leads').doc(id);
+
+    const existing = await docRef.get();
+    if (!existing.exists) {
+      return NextResponse.json(
+        { error: 'Lead not found' },
+        { status: 404 }
+      );
+    }
+
+    await docRef.delete();
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting lead:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
