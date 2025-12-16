@@ -33,7 +33,7 @@ interface Lead {
   email: string;
   phone: string;
   company: string;
-  status: 'new' | 'contacted' | 'converted';
+  status: 'new' | 'contacted' | 'converted' | 'spam';
   createdAt: string;
 }
 
@@ -108,6 +108,8 @@ export default function LeadsPage() {
         return 'secondary';
       case 'converted':
         return 'outline';
+      case 'spam':
+        return 'destructive';
       default:
         return 'default';
     }
@@ -362,6 +364,7 @@ export default function LeadsPage() {
                     <option value="new">New</option>
                     <option value="contacted">Contacted</option>
                     <option value="converted">Converted</option>
+                    <option value="spam">Spam</option>
                   </select>
                   <Badge variant={getStatusVariant(statusDraft)} className="uppercase text-xs">
                     {statusDraft}
@@ -418,12 +421,13 @@ export default function LeadsPage() {
       </header>
 
       <main className="max-w-7xl mx-auto p-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           {[
             { label: 'Total Leads', value: leads.length, delay: 0.1 },
             { label: 'New', value: leads.filter(l => l.status === 'new').length, delay: 0.2 },
             { label: 'Contacted', value: leads.filter(l => l.status === 'contacted').length, delay: 0.3 },
             { label: 'Converted', value: leads.filter(l => l.status === 'converted').length, delay: 0.4 },
+            { label: 'Spam', value: leads.filter(l => l.status === 'spam').length, delay: 0.5 },
           ].map((stat, i) => (
             <motion.div
               key={i}
@@ -461,6 +465,7 @@ export default function LeadsPage() {
             <option value="new">New</option>
             <option value="contacted">Contacted</option>
             <option value="converted">Converted</option>
+            <option value="spam">Spam</option>
           </select>
           <Button onClick={exportToCSV} className="gap-2 bg-primary hover:bg-primary/90">
             <Download className="w-4 h-4" />
