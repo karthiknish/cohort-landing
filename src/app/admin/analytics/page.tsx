@@ -15,6 +15,7 @@ import {
   TrafficSourcesChart,
   TopEventsChart,
   DevicesChart,
+  RealtimeMapChart,
   Ga4OverviewResponse,
   toTick,
 } from '@/components/analytics';
@@ -35,11 +36,20 @@ export default function AnalyticsPage() {
   const [overview, setOverview] = useState<Ga4OverviewResponse | null>(null);
   const [selectedDays, setSelectedDays] = useState(30);
 
+  const [authToken, setAuthToken] = useState<string>('');
+
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/admin/login');
     }
   }, [user, authLoading, router]);
+
+  // Keep auth token fresh for realtime component
+  useEffect(() => {
+    if (user) {
+      user.getIdToken().then(setAuthToken);
+    }
+  }, [user]);
 
   const fetchAnalytics = useCallback(async (days: number) => {
     if (!user) return;
@@ -181,6 +191,9 @@ export default function AnalyticsPage() {
           </Card>
         ) : (
           <>
+            {/* Realtime Map Section */}
+            {authToken && <RealtimeMapChart authToken={authToken} />}
+
             {/* Stats Cards */}
             <StatsCards
               days={stats.days}
