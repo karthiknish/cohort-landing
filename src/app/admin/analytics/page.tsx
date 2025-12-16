@@ -18,6 +18,7 @@ import {
   TrafficSourcesChart,
   TopEventsChart,
   DevicesChart,
+  CountriesChart,
   RealtimeMapChart,
   Ga4OverviewResponse,
   toTick,
@@ -131,6 +132,7 @@ export default function AnalyticsPage() {
   const topSources = useMemo(() => overview?.topSources || [], [overview]);
   const topEvents = useMemo(() => overview?.topEvents || [], [overview]);
   const devices = useMemo(() => overview?.devices || [], [overview]);
+  const countries = useMemo(() => overview?.countries || [], [overview]);
 
   const handleLogout = async () => {
     await logout();
@@ -237,8 +239,11 @@ export default function AnalyticsPage() {
               <TopEventsChart data={topEvents} />
             </div>
 
-            {/* Devices (full width) */}
-            <DevicesChart data={devices} />
+            {/* Countries + Devices */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <CountriesChart data={countries} />
+              <DevicesChart data={devices} />
+            </div>
           </>
         )}
       </main>

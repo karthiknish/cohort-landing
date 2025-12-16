@@ -18,6 +18,7 @@ export type Ga4OverviewResponse = {
   topSources: Array<{ source: string; sessions: number }>;
   topEvents: Array<{ name: string; count: number }>;
   devices: Array<{ device: string; users: number }>;
+  countries: Array<{ country: string; users: number; sessions: number }>;
 };
 
 export type TimeseriesDataPoint = Ga4OverviewResponse['timeseries'][number] & {

@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
       ? [{ startDate, endDate }]
       : [{ startDate: `${days}daysAgo`, endDate: 'today' }];
 
-    const [timeseriesReport, topPagesReport, sourcesReport, eventsReport, devicesReport] = await Promise.all([
+    const [timeseriesReport, topPagesReport, sourcesReport, eventsReport, devicesReport, countriesReport] = await Promise.all([
       client.runReport({
         property,
         dateRanges,
@@ -107,6 +107,14 @@ export async function GET(request: NextRequest) {
         metrics: [{ name: 'activeUsers' }],
         orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
         limit: 5,
+      }),
+      client.runReport({
+        property,
+        dateRanges,
+        dimensions: [{ name: 'country' }],
+        metrics: [{ name: 'activeUsers' }, { name: 'sessions' }],
+        orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+        limit: 10,
       }),
     ]);
 
@@ -154,6 +162,12 @@ export async function GET(request: NextRequest) {
       users: numberOrZero(row.metricValues?.[0]?.value),
     }));
 
+    const countries = (countriesReport[0].rows || []).map((row) => ({
+      country: row.dimensionValues?.[0]?.value || '(not set)',
+      users: numberOrZero(row.metricValues?.[0]?.value),
+      sessions: numberOrZero(row.metricValues?.[1]?.value),
+    }));
+
     return NextResponse.json({
       source: 'ga4',
       windowDays: days,
@@ -163,6 +177,7 @@ export async function GET(request: NextRequest) {
       topSources,
       topEvents,
       devices,
+      countries,
     });
   } catch (error) {
     const code = (error as any)?.code;
