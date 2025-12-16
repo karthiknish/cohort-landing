@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminFirestore } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
+import { sendBrochureEmail } from '@/lib/brevo';
 
 interface LeadData {
   name: string;
@@ -11,7 +12,7 @@ interface LeadData {
 
 interface LeadStatusUpdate {
   id: string;
-  status: 'new' | 'contacted' | 'converted';
+  status: 'new' | 'contacted' | 'converted' | 'spam';
 }
 
 export async function POST(request: NextRequest) {
@@ -44,16 +45,41 @@ export async function POST(request: NextRequest) {
       phone: body.phone || '',
       company: body.company || '',
       status: 'new',
+      emailStatus: 'pending' as 'pending' | 'sent' | 'failed',
       createdAt: FieldValue.serverTimestamp(),
     };
 
     const docRef = await db.collection('leads').add(leadData);
 
+    // Send brochure email via Brevo
+    const emailResult = await sendBrochureEmail(body.email, body.name);
+
+    if (emailResult.success) {
+      // Update lead with email success
+      await docRef.update({
+        emailStatus: 'sent',
+        emailSentAt: FieldValue.serverTimestamp(),
+        emailMessageId: emailResult.messageId || null,
+      });
+    } else {
+      // Mark as spam if email fails
+      await docRef.update({
+        status: 'spam',
+        emailStatus: 'failed',
+        emailError: emailResult.error || 'Unknown error',
+      });
+      
+      console.warn(`Email failed for lead ${docRef.id}, marked as spam:`, emailResult.error);
+    }
+
     return NextResponse.json(
       { 
         success: true, 
-        message: 'Lead submitted successfully',
-        id: docRef.id 
+        message: emailResult.success 
+          ? 'Lead submitted and brochure sent successfully' 
+          : 'Lead submitted but email delivery failed',
+        id: docRef.id,
+        emailSent: emailResult.success,
       },
       { status: 201 }
     );
@@ -79,6 +105,7 @@ export async function GET() {
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt?.toDate?.()?.toISOString() || null,
+      emailSentAt: doc.data().emailSentAt?.toDate?.()?.toISOString() || null,
     }));
 
     return NextResponse.json({ leads });
@@ -106,6 +133,7 @@ export async function PATCH(request: NextRequest) {
       'new',
       'contacted',
       'converted',
+      'spam',
     ];
 
     if (!allowedStatuses.includes(body.status)) {

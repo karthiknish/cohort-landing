@@ -23,6 +23,7 @@ interface FormData {
   email: string;
   phone: string;
   company: string;
+  website: string; // Honeypot field - should remain empty
 }
 
 export default function BrochureModal({ onClose }: BrochureModalProps) {
@@ -31,23 +32,43 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
     email: '',
     phone: '',
     company: '',
+    website: '', // Honeypot
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [formLoadTime] = useState(Date.now()); // Track when form opened
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError('');
 
+    // Spam checks
+    // 1. Honeypot field should be empty (bots fill it)
+    if (formData.website) {
+      console.warn('Honeypot triggered');
+      setIsSuccess(true); // Fake success for bots
+      return;
+    }
+
+    // 2. Form submitted too quickly (less than 3 seconds)
+    const timeTaken = Date.now() - formLoadTime;
+    if (timeTaken < 3000) {
+      console.warn('Form submitted too quickly');
+      setError('Please take a moment to fill out the form.');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
+      const { website, ...submitData } = formData; // Exclude honeypot from submission
       const response = await fetch('/api/leads', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       if (!response.ok) {
@@ -55,19 +76,11 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
       }
 
       setIsSuccess(true);
-      
-      // Trigger brochure download
-      const link = document.createElement('a');
-      link.href = '/Brochure.pdf';
-      link.download = 'Cohort-Brochure.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
 
       // Auto-close after success
       setTimeout(() => {
         onClose();
-      }, 3000);
+      }, 4000);
     } catch (err) {
       setError('Something went wrong. Please try again.');
       console.error('Form submission error:', err);
@@ -96,7 +109,8 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
               <Check className="w-10 h-10 text-[#F8F8FF]" />
             </div>
             <h3 className="text-xl font-bold mb-2">Thank You!</h3>
-            <p className="text-muted-foreground">Your brochure is downloading now.</p>
+            <p className="text-muted-foreground">Your brochure has been sent to your email!</p>
+            <p className="text-sm text-muted-foreground mt-2">Check your inbox (and spam folder).</p>
           </motion.div>
         ) : (
           <>
@@ -159,6 +173,20 @@ export default function BrochureModal({ onClose }: BrochureModalProps) {
                   onChange={handleChange}
                   placeholder="Your Company"
                   className="bg-[#F1F1E6] border-[#001640]/10 focus:border-[#7389F4] focus:ring-[#7389F4]/30"
+                />
+              </div>
+
+              {/* Honeypot field - hidden from users, bots will fill it */}
+              <div className="hidden" aria-hidden="true">
+                <Label htmlFor="website">Website</Label>
+                <Input
+                  type="text"
+                  id="website"
+                  name="website"
+                  value={formData.website}
+                  onChange={handleChange}
+                  tabIndex={-1}
+                  autoComplete="off"
                 />
               </div>
 
