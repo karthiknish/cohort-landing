@@ -296,3 +296,130 @@ export async function sendAdminNotification(
     };
   }
 }
+
+/**
+ * Send password reset email via Brevo API
+ */
+export async function sendPasswordResetEmail(
+  toEmail: string,
+  resetLink: string
+): Promise<SendEmailResponse> {
+  const apiKey = process.env.BREVO_API_KEY;
+
+  if (!apiKey) {
+    console.error('BREVO_API_KEY is not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  try {
+    const emailPayload: BrevoEmailPayload = {
+      sender: {
+        name: 'Cohorts Team',
+        email: 'noreply@cohorts.team',
+      },
+      to: [
+        {
+          email: toEmail,
+          name: toEmail,
+        },
+      ],
+      subject: 'Reset Your Admin Password',
+      htmlContent: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            @font-face {
+              font-family: 'Times New Roman Condensed';
+              src: url('https://cohorts.team/fonts/Times%20New%20Roman%20MT%20Condensed%20Regular.otf') format('opentype');
+              font-weight: 400;
+              font-style: normal;
+            }
+          </style>
+        </head>
+        <body style="font-family: 'Red Hat Display', Arial, sans-serif; margin: 0; padding: 40px 20px; background-color: #fffcf3;">
+          <div style="max-width: 600px; margin: 0 auto;">
+            <!-- Header with logo -->
+            <div style="text-align: center; margin-bottom: 30px;">
+              <div style="font-family: 'Times New Roman Condensed', 'Times New Roman', Times, serif; font-size: 36px; font-weight: 400; letter-spacing: 0.6px; color: #004aad; line-height: 1; margin-bottom: 8px;">cohorts.team</div>
+              <p style="color: #004aad; font-size: 14px; margin: 0;">Admin Password Reset</p>
+            </div>
+            
+            <!-- Main content card -->
+            <div style="background-color: #ffffff; border-radius: 24px; padding: 40px; border: 1px solid #001640; border-opacity: 0.1;">
+              <h1 style="color: #001640; font-size: 28px; margin-bottom: 24px; font-weight: normal;">Password Reset Request</h1>
+              
+              <p style="color: #001640; font-size: 16px; line-height: 1.7; margin-bottom: 20px;">
+                We received a request to reset your admin password for <span style="color: #004aad; font-weight: 600;">cohorts.team</span>.
+              </p>
+              
+              <p style="color: #001640; font-size: 16px; line-height: 1.7; margin-bottom: 30px;">
+                Click the button below to set a new password. This link will expire in <strong>1 hour</strong>.
+              </p>
+              
+              <!-- CTA Button -->
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${resetLink}" style="display: inline-block; background-color: #004aad; color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 12px; font-size: 16px; font-weight: 600;">
+                  Reset Password
+                </a>
+              </div>
+              
+              <p style="color: #666; font-size: 14px; line-height: 1.7; margin-bottom: 20px;">
+                If you didn't request this password reset, you can safely ignore this email. Your password will remain unchanged.
+              </p>
+              
+              <div style="margin-top: 24px; padding: 16px; background-color: #fffcf3; border-radius: 12px; border: 1px solid #004aad; border-opacity: 0.2;">
+                <p style="margin: 0; color: #666; font-size: 12px;">
+                  🔒 For security, this link can only be used once and expires in 1 hour.
+                </p>
+              </div>
+            </div>
+            
+            <!-- Footer -->
+            <div style="text-align: center; margin-top: 30px; padding: 20px;">
+              <p style="color: #001640; font-size: 12px; margin: 0; opacity: 0.6;">
+                © ${new Date().getFullYear()} Cohorts.team. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+    };
+
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': apiKey,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(emailPayload),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Brevo API error (password reset):', errorData);
+      return {
+        success: false,
+        error: errorData.message || 'Failed to send password reset email',
+      };
+    }
+
+    const data = await response.json();
+    console.log('Password reset email sent successfully:', data);
+
+    return {
+      success: true,
+      messageId: data.messageId,
+    };
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}

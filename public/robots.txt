@@ -1,5 +1,11 @@
+# *
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api
 
-Disallow: /admin/
-Disallow: /api/
+# Host
+Host: https://cohorts.team
+
+# Sitemaps
+Sitemap: https://cohorts.team/sitemap.xml
