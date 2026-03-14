@@ -1,6 +1,7 @@
 'use client';
-
+import Link from 'next/link';
 import { useState, FormEvent } from 'react';
+import { EMAIL_LOGO_DATA_URI } from '@/lib/emailAssets';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -52,9 +53,9 @@ export default function ForgotPasswordPage() {
       >
         <Card className="bg-gradient-to-br from-secondary/95 to-secondary/70 border-white/10 shadow-2xl">
           <CardHeader className="text-center">
-            <a href="/" className="text-2xl font-black tracking-widest text-primary inline-block mb-4">
-              COHORT
-            </a>
+            <Link href="/" className="inline-block mb-4">
+              <img src={EMAIL_LOGO_DATA_URI} alt="cohorts.team" style={{ height: '56px', width: 'auto' }} />
+            </Link>
             <CardTitle className="text-xl">
               {success ? 'Check Your Email' : 'Forgot Password'}
             </CardTitle>

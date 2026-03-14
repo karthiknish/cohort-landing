@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { EMAIL_LOGO_DATA_URI } from '@/lib/emailAssets';
 
 interface SendEmailResponse {
   success: boolean;
@@ -63,20 +64,20 @@ export async function sendBrochureEmail(
             }
           </style>
         </head>
-        <body style="font-family: 'Red Hat Display', Arial, sans-serif; margin: 0; padding: 40px 20px; background-color: #fffcf3;">
+        <body style="font-family: 'Red Hat Display', Arial, sans-serif; margin: 0; padding: 40px 20px; background-color: #F8F8FF;">
           <div style="max-width: 600px; margin: 0 auto;">
             <!-- Header with logo -->
             <div style="text-align: center; margin-bottom: 30px;">
-              <div style="font-family: 'Times New Roman Condensed', 'Times New Roman', Times, serif; font-size: 36px; font-weight: 400; letter-spacing: 0.6px; color: #004aad; line-height: 1; margin-bottom: 8px;">cohorts.team</div>
-              <p style="color: #004aad; font-size: 14px; margin: 0;">More for less</p>
+              <img src="${EMAIL_LOGO_DATA_URI}" alt="cohorts.team" style="height: 56px; width: auto; margin-bottom: 8px;" />
+              <p style="color: #7389F4; font-size: 14px; margin: 0;">More for less</p>
             </div>
             
             <!-- Main content card -->
-            <div style="background-color: #ffffff; border-radius: 24px; padding: 40px; border: 1px solid #001640; border-opacity: 0.1;">
+            <div style="background-color: #ffffff; border-radius: 24px; padding: 40px; border: 1px solid rgba(0, 22, 64, 0.15);">
               <h1 style="color: #001640; font-size: 28px; margin-bottom: 24px; font-weight: normal;">Hi ${toName},</h1>
               
               <p style="color: #001640; font-size: 16px; line-height: 1.7; margin-bottom: 20px;">
-                Thank you for your interest in <span style="color: #004aad; font-weight: 600;">Cohorts.team</span>!
+                Thank you for your interest in <span style="color: #7389F4; font-weight: 600;">Cohorts.team</span>!
               </p>
               
               <p style="color: #001640; font-size: 16px; line-height: 1.7; margin-bottom: 20px;">
@@ -85,12 +86,12 @@ export async function sendBrochureEmail(
               
               <p style="color: #001640; font-size: 16px; line-height: 1.7; margin-bottom: 30px;">
                 If you have any questions or would like to discuss how we can work together, feel free to reach out to us on 
-                <a href="https://www.linkedin.com/company/cohorts-team" style="color: #004aad; text-decoration: none; font-weight: 600;">LinkedIn</a>.
+                <a href="https://www.linkedin.com/company/cohorts-team" style="color: #7389F4; text-decoration: none; font-weight: 600;">LinkedIn</a>.
               </p>
               
               <p style="color: #001640; font-size: 16px; line-height: 1.7; margin-bottom: 10px;">
                 Best regards,<br>
-                <strong style="color: #004aad;">cohorts.team</strong>
+                <strong style="color: #7389F4;">cohorts.team</strong>
               </p>
             </div>
             
@@ -100,7 +101,7 @@ export async function sendBrochureEmail(
                 © ${new Date().getFullYear()} Cohorts.team. All rights reserved.
               </p>
               <p style="color: #001640; font-size: 12px; margin-top: 10px; opacity: 0.6;">
-                Made with ❤️ for Ad agencies
+                Made for Ad agencies
               </p>
             </div>
           </div>
@@ -183,7 +184,7 @@ export async function sendAdminNotification(
           name: 'Deepak',
         },
       ],
-      subject: `📥 New Lead: ${lead.name}`,
+      subject: `New Lead: ${lead.name}`,
       htmlContent: `
         <!DOCTYPE html>
         <html>
@@ -200,41 +201,41 @@ export async function sendAdminNotification(
             }
           </style>
         </head>
-        <body style="font-family: 'Red Hat Display', Arial, sans-serif; margin: 0; padding: 40px 20px; background-color: #fffcf3;">
+        <body style="font-family: 'Red Hat Display', Arial, sans-serif; margin: 0; padding: 40px 20px; background-color: #F8F8FF;">
           <div style="max-width: 600px; margin: 0 auto;">
             <!-- Header -->
             <div style="text-align: center; margin-bottom: 30px;">
-              <div style="font-family: 'Times New Roman Condensed', 'Times New Roman', Times, serif; font-size: 36px; font-weight: 400; letter-spacing: 0.6px; color: #004aad; line-height: 1; margin-bottom: 8px;">cohorts.team</div>
-              <p style="color: #004aad; font-size: 14px; margin: 0;">Lead Notification</p>
+              <img src="${EMAIL_LOGO_DATA_URI}" alt="cohorts.team" style="height: 56px; width: auto; margin-bottom: 8px;" />
+              <p style="color: #7389F4; font-size: 14px; margin: 0;">Lead Notification</p>
             </div>
             
             <!-- Main content card -->
-            <div style="background-color: #ffffff; border-radius: 24px; padding: 40px; border: 1px solid #001640; border-opacity: 0.1;">
-              <h1 style="color: #001640; font-size: 24px; margin-bottom: 24px; font-weight: normal;">🎉 New Lead Received!</h1>
+            <div style="background-color: #ffffff; border-radius: 24px; padding: 40px; border: 1px solid rgba(0, 22, 64, 0.15);">
+              <h1 style="color: #001640; font-size: 24px; margin-bottom: 24px; font-weight: normal;">New Lead Received</h1>
               
               <table style="width: 100%; border-collapse: collapse;">
                 <tr>
-                  <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #666; font-size: 14px; width: 120px;">Name</td>
-                  <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #001640; font-size: 16px; font-weight: 600;">${lead.name}</td>
+                  <td style="padding: 12px 0; border-bottom: 1px solid rgba(0, 22, 64, 0.15); color: #666; font-size: 14px; width: 120px;">Name</td>
+                  <td style="padding: 12px 0; border-bottom: 1px solid rgba(0, 22, 64, 0.15); color: #001640; font-size: 16px; font-weight: 600;">${lead.name}</td>
                 </tr>
                 <tr>
-                  <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #666; font-size: 14px;">Email</td>
-                  <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #004aad; font-size: 16px;">
-                    <a href="mailto:${lead.email}" style="color: #004aad; text-decoration: none; font-weight: 600;">${lead.email}</a>
+                  <td style="padding: 12px 0; border-bottom: 1px solid rgba(0, 22, 64, 0.15); color: #666; font-size: 14px;">Email</td>
+                  <td style="padding: 12px 0; border-bottom: 1px solid rgba(0, 22, 64, 0.15); color: #7389F4; font-size: 16px;">
+                    <a href="mailto:${lead.email}" style="color: #7389F4; text-decoration: none; font-weight: 600;">${lead.email}</a>
                   </td>
                 </tr>
                 ${lead.phone ? `
                 <tr>
-                  <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #666; font-size: 14px;">Phone</td>
-                  <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #001640; font-size: 16px;">
-                    <a href="tel:${lead.phone}" style="color: #004aad; text-decoration: none;">${lead.phone}</a>
+                  <td style="padding: 12px 0; border-bottom: 1px solid rgba(0, 22, 64, 0.15); color: #666; font-size: 14px;">Phone</td>
+                  <td style="padding: 12px 0; border-bottom: 1px solid rgba(0, 22, 64, 0.15); color: #001640; font-size: 16px;">
+                    <a href="tel:${lead.phone}" style="color: #7389F4; text-decoration: none;">${lead.phone}</a>
                   </td>
                 </tr>
                 ` : ''}
                 ${lead.company ? `
                 <tr>
-                  <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #666; font-size: 14px;">Company</td>
-                  <td style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; color: #001640; font-size: 16px;">${lead.company}</td>
+                  <td style="padding: 12px 0; border-bottom: 1px solid rgba(0, 22, 64, 0.15); color: #666; font-size: 14px;">Company</td>
+                  <td style="padding: 12px 0; border-bottom: 1px solid rgba(0, 22, 64, 0.15); color: #001640; font-size: 16px;">${lead.company}</td>
                 </tr>
                 ` : ''}
                 <tr>
@@ -243,9 +244,9 @@ export async function sendAdminNotification(
                 </tr>
               </table>
               
-              <div style="margin-top: 24px; padding: 16px; background-color: #fffcf3; border-radius: 12px; border: 1px solid #004aad; border-opacity: 0.2;">
-                <p style="margin: 0; color: #004aad; font-size: 14px;">
-                  ✅ The brochure has been automatically sent to the lead's email address.
+              <div style="margin-top: 24px; padding: 16px; background-color: #F1F1E6; border-radius: 12px; border: 1px solid rgba(115, 137, 244, 0.25);">
+                <p style="margin: 0; color: #7389F4; font-size: 14px;">
+                  The brochure has been automatically sent to the lead's email address.
                 </p>
               </div>
             </div>
@@ -339,20 +340,20 @@ export async function sendPasswordResetEmail(
             }
           </style>
         </head>
-        <body style="font-family: 'Red Hat Display', Arial, sans-serif; margin: 0; padding: 40px 20px; background-color: #fffcf3;">
+        <body style="font-family: 'Red Hat Display', Arial, sans-serif; margin: 0; padding: 40px 20px; background-color: #F8F8FF;">
           <div style="max-width: 600px; margin: 0 auto;">
             <!-- Header with logo -->
             <div style="text-align: center; margin-bottom: 30px;">
-              <div style="font-family: 'Times New Roman Condensed', 'Times New Roman', Times, serif; font-size: 36px; font-weight: 400; letter-spacing: 0.6px; color: #004aad; line-height: 1; margin-bottom: 8px;">cohorts.team</div>
-              <p style="color: #004aad; font-size: 14px; margin: 0;">Admin Password Reset</p>
+              <img src="${EMAIL_LOGO_DATA_URI}" alt="cohorts.team" style="height: 56px; width: auto; margin-bottom: 8px;" />
+              <p style="color: #7389F4; font-size: 14px; margin: 0;">Admin Password Reset</p>
             </div>
             
             <!-- Main content card -->
-            <div style="background-color: #ffffff; border-radius: 24px; padding: 40px; border: 1px solid #001640; border-opacity: 0.1;">
+            <div style="background-color: #ffffff; border-radius: 24px; padding: 40px; border: 1px solid rgba(0, 22, 64, 0.15);">
               <h1 style="color: #001640; font-size: 28px; margin-bottom: 24px; font-weight: normal;">Password Reset Request</h1>
               
               <p style="color: #001640; font-size: 16px; line-height: 1.7; margin-bottom: 20px;">
-                We received a request to reset your admin password for <span style="color: #004aad; font-weight: 600;">cohorts.team</span>.
+                We received a request to reset your admin password for <span style="color: #7389F4; font-weight: 600;">cohorts.team</span>.
               </p>
               
               <p style="color: #001640; font-size: 16px; line-height: 1.7; margin-bottom: 30px;">
@@ -361,7 +362,7 @@ export async function sendPasswordResetEmail(
               
               <!-- CTA Button -->
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${resetLink}" style="display: inline-block; background-color: #004aad; color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 12px; font-size: 16px; font-weight: 600;">
+                <a href="${resetLink}" style="display: inline-block; background-color: #001640; color: #F8F8FF; text-decoration: none; padding: 16px 40px; border-radius: 12px; font-size: 16px; font-weight: 600;">
                   Reset Password
                 </a>
               </div>
@@ -370,9 +371,9 @@ export async function sendPasswordResetEmail(
                 If you didn't request this password reset, you can safely ignore this email. Your password will remain unchanged.
               </p>
               
-              <div style="margin-top: 24px; padding: 16px; background-color: #fffcf3; border-radius: 12px; border: 1px solid #004aad; border-opacity: 0.2;">
-                <p style="margin: 0; color: #666; font-size: 12px;">
-                  🔒 For security, this link can only be used once and expires in 1 hour.
+              <div style="margin-top: 24px; padding: 16px; background-color: #F1F1E6; border-radius: 12px; border: 1px solid rgba(115, 137, 244, 0.25);">
+                <p style="margin: 0; color: #001640; font-size: 12px; opacity: 0.7;">
+                  For security, this link can only be used once and expires in 1 hour.
                 </p>
               </div>
             </div>
